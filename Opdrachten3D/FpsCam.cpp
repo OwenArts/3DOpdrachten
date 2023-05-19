@@ -1,6 +1,7 @@
 #include "FpsCam.h"
 #include <GLFW/glfw3.h>
 #include <glm/gtc/matrix_transform.hpp>
+#include <iostream>
 
 FpsCam::FpsCam(GLFWwindow* window)
 {
@@ -32,15 +33,21 @@ void FpsCam::update(GLFWwindow* window)
 	glfwGetCursorPos(window, &x, &y);
 
 	static double lastX = x;
-	static double lastY = y;
+	//static double lastY = y;
 
-	rotation.x -= (float)(lastY - y) / 100.0f;
+	if ((glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) || (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)) // Rotate to the right on pressing Left arrow or A
+		lastX = x + 5;
+	if ((glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) || (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)) // Rotate to the right on pressing right arrow or D
+		lastX = x - 5;
+
+	//rotation.x -= (float)(lastY - y) / 100.0f;
 	rotation.y -= (float)(lastX - x) / 100.0f;
 
 	lastX = x;
-	lastY = y;
+	//lastY = y;
 
-
+	// Adds the movement via awsd
+	/*
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
 		move(0, 0.05f);
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
@@ -49,4 +56,5 @@ void FpsCam::update(GLFWwindow* window)
 		move(90, 0.05f);
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
 		move(-90, 0.05f);
+	*/
 }

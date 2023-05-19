@@ -13,9 +13,8 @@ using tigl::Vertex;
 #pragma comment(lib, "opengl32.lib")
 
 GLFWwindow* window;
-ObjModel* model1;
-ObjModel* model2;
-ObjModel* model3;
+
+ObjModel* biljartTalbe[3];
 FpsCam* camera;
 float rotation = 0;
 
@@ -60,15 +59,15 @@ void init()
 	int value[10];
 	glGetIntegerv(GL_MAX_TEXTURE_SIZE, value);
 	glfwSetKeyCallback(window, [](GLFWwindow* window, int key, int scancode, int action, int mods)
-	{
-		if (key == GLFW_KEY_ESCAPE)
-			glfwSetWindowShouldClose(window, true);
-	});
+		{
+			if (key == GLFW_KEY_ESCAPE)
+				glfwSetWindowShouldClose(window, true);
+		});
 
 
-	model1 = new ObjModel("models/biljart/Biljart_table.obj");
-	model2 = new ObjModel("models/biljart/Biljart_edge.obj");
-	model3 = new ObjModel("models/biljart/Biljart_cloth.obj");
+	biljartTalbe[0] = new ObjModel("models/biljart/Biljart_table.obj");
+	biljartTalbe[1] = new ObjModel("models/biljart/Biljart_edge.obj");
+	biljartTalbe[2] = new ObjModel("models/biljart/Biljart_cloth.obj");
 	camera = new FpsCam(window);
 }
 
@@ -94,7 +93,6 @@ void draw()
 
 	glEnable(GL_DEPTH_TEST);
 
-	model1->draw();
-	model2->draw();
-	model3->draw();
+	for (auto& model : biljartTalbe) 
+		model->draw();
 }
