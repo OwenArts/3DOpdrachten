@@ -6,6 +6,18 @@
 
 #include "FpsCam.h"
 
+/* TODO:
+*	Bal toevoegen
+*	Bal logica (locatie, richting, snelheid (afnemend), botsing, etc)
+*	Afmetigen tafel
+*	Collision met tafel
+*	Stok toevoegen
+*	Stok logica (afschieten, richting laten bepalen door gebruiker, etc)
+*	Belichting
+*	Automatisch bewegend object
+*	Speler object laten bedienen (zie `Stok logica`)
+*/
+
 using tigl::Vertex;
 
 #pragma comment(lib, "glfw3.lib")
