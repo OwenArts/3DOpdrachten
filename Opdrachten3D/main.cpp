@@ -3,15 +3,18 @@
 #include "tigl.h"
 #include "ObjModel.h"
 #include <glm/gtc/matrix_transform.hpp>
+#include <iostream>
 
+#include "FpsCam.h"
+#include "WhiteBall.h"
 #include "FpsCam.h"
 
 /* TODO:
-*	Bal toevoegen
+*	Bal toevoegen (ball.cpp, white-, red-, yellowball.cpp)						DONE
 *	Bal logica (locatie, richting, snelheid (afnemend), botsing, etc)
 *	Afmetigen tafel
 *	Collision met tafel
-*	Stok toevoegen
+*	Stok toevoegen (ceu.cpp)
 *	Stok logica (afschieten, richting laten bepalen door gebruiker, etc)
 *	Belichting
 *	Automatisch bewegend object
@@ -29,6 +32,9 @@ GLFWwindow* window;
 ObjModel* biljartTalbe[3];
 FpsCam* camera;
 float rotation = 0;
+WhiteBall whiteBall = WhiteBall("models/ball/WhiteBall.obj");
+WhiteBall redBall = WhiteBall("models/ball/RedBall.obj");
+WhiteBall yellowBall = WhiteBall("models/ball/YellowBall.obj");
 
 void init();
 void update();
@@ -67,7 +73,6 @@ int main(void)
 
 void init()
 {
-
 	int value[10];
 	glGetIntegerv(GL_MAX_TEXTURE_SIZE, value);
 	glfwSetKeyCallback(window, [](GLFWwindow* window, int key, int scancode, int action, int mods)
@@ -80,6 +85,9 @@ void init()
 	biljartTalbe[0] = new ObjModel("models/biljart/Biljart_table.obj");
 	biljartTalbe[1] = new ObjModel("models/biljart/Biljart_edge.obj");
 	biljartTalbe[2] = new ObjModel("models/biljart/Biljart_cloth.obj");
+	whiteBall.init_ball();
+	yellowBall.init_ball();
+	redBall.init_ball();
 	camera = new FpsCam(window);
 }
 
@@ -105,6 +113,9 @@ void draw()
 
 	glEnable(GL_DEPTH_TEST);
 
-	for (auto& model : biljartTalbe) 
+	for (auto& model : biljartTalbe)
 		model->draw();
+	whiteBall.model->draw();
+	yellowBall.model->draw();
+	redBall.model->draw();
 }

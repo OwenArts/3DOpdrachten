@@ -156,19 +156,27 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Ceu.cpp" />
     <ClCompile Include="FpsCam.cpp" />
-    <ClCompile Include="Component.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="ObjModel.cpp" />
+    <ClCompile Include="Ball.cpp" />
+    <ClCompile Include="RedBall.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="tigl.cpp" />
+    <ClCompile Include="WhiteBall.cpp" />
+    <ClCompile Include="YellowBall.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Ball.h" />
     <ClInclude Include="FpsCam.h" />
     <ClInclude Include="ObjModel.h" />
+    <ClInclude Include="RedBall.h" />
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="tigl.h" />
+    <ClInclude Include="WhiteBall.h" />
+    <ClInclude Include="YellowBall.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
