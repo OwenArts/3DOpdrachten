@@ -14,16 +14,16 @@
 
 /* TODO:
 *	Bal toevoegen (ball.cpp, white-, red-, yellowball.cpp)						DONE
-*	Bal logica (locatie, richting, snelheid (afnemend), botsing, etc)
+*	Bal logica (locatie, richting, snelheid (afnemend), botsing, etc)			DONE (richting, snelheid)
 *	Camera laten bewegen om juiste bal											DONE
 *	Afmetigen tafel
-*	Collision met tafel
+*	Collision met randen tafel en andere ballen
 *	Stok toevoegen (ceu.cpp) (aanmaken in blender)
-*	Stok logica (afschieten, richting laten bepalen door gebruiker, etc)
+*	Stok logica (afschieten, richting laten bepalen door gebruiker, etc)		DONE (afschieten muisklik, richting dmv a,d, pijlknoppen en muis)
 *	Belichting
 *	mist/fog																	DONE
-*	Automatisch bewegend object (Keu)
-*	Speler object laten bedienen (zie `Stok logica`)
+*	Automatisch bewegend object (Keu of bal laten rollen)
+*	Speler object laten bedienen (zie `Stok logica`)							DONE
 */
 
 using tigl::Vertex;
