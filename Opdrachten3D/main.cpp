@@ -20,7 +20,7 @@
 *	Collision met randen tafel en andere ballen
 *	Stok toevoegen (ceu.cpp) (aanmaken in blender)
 *	Stok logica (afschieten, richting laten bepalen door gebruiker, etc)		DONE (afschieten muisklik, richting dmv a,d, pijlknoppen en muis)
-*	Belichting
+*	Belichting																	W.I.P.
 *	mist/fog																	DONE
 *	Automatisch bewegend object (Keu of bal laten rollen)
 *	Speler object laten bedienen (zie `Stok logica`)							DONE
@@ -48,6 +48,7 @@ void init();
 void update();
 void draw();
 void enableFog(bool flag);
+void enableLight(bool state);
 
 int main(void)
 {
@@ -152,6 +153,7 @@ void draw()
 
 	glEnable(GL_DEPTH_TEST);
 	enableFog(true);
+	enableLight(true);
 
 
 	for (auto& model : biljartTable)
@@ -162,13 +164,31 @@ void draw()
 	//ceu->draw();
 }
 
-void enableFog(bool flag) {
-	if (flag) {
+void enableFog(bool state) 
+{
+	if (state) {
 		tigl::shader->enableFog(true);
 		tigl::shader->setFogLinear(1, 4);
 		tigl::shader->setFogExp(.15f);
 	}
 	else {
 		tigl::shader->enableFog(false);
+	}
+}
+
+void enableLight(bool state) 
+{
+	if (state) {
+		tigl::shader->enableLighting(true);
+		tigl::shader->setLightCount(1);
+		tigl::shader->setLightDirectional(0, false);
+		tigl::shader->setLightPosition(0, glm::vec3(0, 25, 0));
+		tigl::shader->setLightAmbient(0, glm::vec3(0.1f, 0.1f, 0.15f));
+		tigl::shader->setLightDiffuse(0, glm::vec3(0.8f, 0.8f, 0.8f));
+		tigl::shader->setLightSpecular(0, glm::vec3(225.f/255, 159.f/255, 0));
+		tigl::shader->setShinyness(5.f);
+	}
+	else {
+		tigl::shader->enableLighting(false);
 	}
 }
