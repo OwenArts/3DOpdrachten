@@ -36,7 +36,7 @@ float rotation = 0;
 WhiteBall* whiteBall = new WhiteBall("models/ball/WhiteBall.obj");
 RedBall* redBall = new RedBall("models/ball/RedBall.obj");
 YellowBall* yellowBall = new YellowBall("models/ball/YellowBall.obj");
-bool activePlayer = false;	//false on whiteball, true on yellowball
+bool activePlayer = true;	//false on whiteball, true on yellowball
 
 void init();
 void update();
@@ -46,7 +46,7 @@ int main(void)
 {
 	if (!glfwInit())
 		throw "Could not initialize glwf";
-	window = glfwCreateWindow(1400, 800, "Hello World", NULL, NULL);
+	window = glfwCreateWindow(1400, 800, "Three cushion billiard", NULL, NULL);
 	if (!window)
 	{
 		glfwTerminate();

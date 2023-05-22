@@ -27,15 +27,15 @@ glm::mat4 Camera::getMatrix()
 
 	if (activePlayer)
 	{
-		glm::vec3 playerTwoPosition = playerTwo->getPosition() + glm::vec3(0, .5f, 0);
+		glm::vec3 playerTwoPosition = playerTwo->getPosition() + glm::vec3(0, 1.f, 0);
 		glm::vec3 offset(0, 0, distanceToObject);
-		glm::mat4 rotationMatrix = glm::rotate(glm::mat4(1.0f), rotation.y, glm::vec3(0, 1, 0));
+		glm::mat4 rotationMatrix = glm::rotate(glm::mat4(1.0f), -rotation.y, glm::vec3(0, 1, 0));
 		glm::vec4 rotatedOffset = rotationMatrix * glm::vec4(offset, 1.0f);
 		cameraPosition = playerTwoPosition + glm::vec3(rotatedOffset);
 	}
 	else
 	{
-		glm::vec3 playerOnePosition = playerOne->getPosition() + glm::vec3(0, .5f, 0);
+		glm::vec3 playerOnePosition = playerOne->getPosition() + glm::vec3(0, 1.f, 0);
 		glm::vec3 offset(0, 0, distanceToObject);
 		glm::mat4 rotationMatrix = glm::rotate(glm::mat4(1.0f), -rotation.y, glm::vec3(0, 1, 0));
 		glm::vec4 rotatedOffset = rotationMatrix * glm::vec4(offset, 1.0f);
