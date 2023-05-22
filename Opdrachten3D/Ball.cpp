@@ -33,11 +33,11 @@ void Ball::update(float deltaTime)
 	{
 		if (speed > 0.05f)
 		{
-			// 0f <= y <= 6.3f
+			// 0f (0) <= y <= 6.3f (360)
 			position.x += (-sin(direction.y) * speed * deltaTime);
 			position.z += (cos(direction.y) * speed * deltaTime);
-			speed -= 0.01f;
-			std::cout << "Speed: " << speed << ", Direction: [" << direction.x << "(not important), " << direction.y << "], deltatime: " << deltaTime << std::endl;
+			speed -= 0.007f;
+			//std::cout << "Speed: " << speed << ", Direction: [" << direction.x << "(not important), " << direction.y << "], deltatime: " << deltaTime << std::endl;
 		}
 		else
 		{
