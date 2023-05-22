@@ -21,6 +21,7 @@
 *	Stok toevoegen (ceu.cpp) (aanmaken in blender)
 *	Stok logica (afschieten, richting laten bepalen door gebruiker, etc)
 *	Belichting
+*	mist/fog																	DONE
 *	Automatisch bewegend object (Keu)
 *	Speler object laten bedienen (zie `Stok logica`)
 */
@@ -33,18 +34,20 @@ using tigl::Vertex;
 
 GLFWwindow* window;
 
-ObjModel* biljartTalbe[3];
+ObjModel* biljartTable[3];
 Camera* camera;
 Ceu* ceu;
 float rotation = 0;
-WhiteBall* whiteBall = new WhiteBall("models/ball/WhiteBall.obj");
-RedBall* redBall = new RedBall("models/ball/RedBall.obj");
-YellowBall* yellowBall = new YellowBall("models/ball/YellowBall.obj");
-bool activePlayer = false;	//false on whiteball, true on yellowball
+WhiteBall* whiteBall;
+RedBall* redBall;
+YellowBall* yellowBall;
+bool activePlayer = true;	//false on whiteball, true on yellowball
+double lastFrameTime = 0;
 
 void init();
 void update();
 void draw();
+void enableFog(bool flag);
 
 int main(void)
 {
@@ -86,21 +89,58 @@ void init()
 			if (key == GLFW_KEY_ESCAPE)
 				glfwSetWindowShouldClose(window, true);
 		});
-
-
-	biljartTalbe[0] = new ObjModel("models/biljart/Biljart_table.obj");
-	biljartTalbe[1] = new ObjModel("models/biljart/Biljart_edge.obj");
-	biljartTalbe[2] = new ObjModel("models/biljart/Biljart_cloth.obj");
-	whiteBall->init_ball();
-	yellowBall->init_ball();
-	redBall->init_ball();
+	glfwSetMouseButtonCallback(window, [](GLFWwindow* window, int button, int action, int mods)
+		{
+			if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS && !activePlayer)
+			{
+				std::cout << "whiteball pressed" << std::endl;
+				if (whiteBall->getSpeed() < 0.05f)
+				{
+					std::cout << "whiteball adding movement" << std::endl;
+					whiteBall->move(glm::vec2(0, 1.f), 3.f);
+				}
+			}
+			if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS && activePlayer)
+			{
+				std::cout << "yellowball pressed" << std::endl;
+				if (yellowBall->getSpeed() < 0.05f)
+				{
+					std::cout << "yellowball adding movement" << std::endl;
+					yellowBall->move(glm::vec2(0, 1.f), 3.f);
+				}
+			}
+		});
+	// Load all moddels
+	biljartTable[0] = new ObjModel("models/biljard/Biljart_table.obj");
+	biljartTable[1] = new ObjModel("models/biljard/Biljart_edge.obj");
+	biljartTable[2] = new ObjModel("models/biljard/Biljart_cloth.obj");
+	whiteBall = new WhiteBall("models/ball/WhiteBall.obj");
+	redBall = new RedBall("models/ball/RedBall.obj");
+	yellowBall = new YellowBall("models/ball/YellowBall.obj");
 	camera = new Camera(window, whiteBall, yellowBall);
-	ceu = new Ceu(*camera);
+	ceu = new Ceu(*camera, "models/ceu/Ceu.obj");
 }
 
 void update()
 {
+	double frameTime = glfwGetTime();
+	float deltaTime = lastFrameTime - frameTime;
+	lastFrameTime = frameTime;
+
+	if (!activePlayer && (whiteBall->getSpeed() <= 0.05f && whiteBall->getSpeed() > 0)) {
+		activePlayer = !activePlayer;
+		std::cout<< "going to yellow" << std::endl;
+	}
+	if (activePlayer && (yellowBall->getSpeed() <= 0.05f && yellowBall->getSpeed() > 0)) {
+		activePlayer = !activePlayer;
+		std::cout << "going to white" << std::endl;
+	}
+
 	camera->update(window, activePlayer);
+	whiteBall->update(deltaTime);
+	yellowBall->update(deltaTime);
+	redBall->update(deltaTime);
+	ceu->update(deltaTime);
 }
 
 void draw()
@@ -119,10 +159,24 @@ void draw()
 	tigl::shader->enableColor(true);
 
 	glEnable(GL_DEPTH_TEST);
+	enableFog(true);
 
-	for (auto& model : biljartTalbe)
+
+	for (auto& model : biljartTable)
 		model->draw();
 	whiteBall->draw();
 	yellowBall->draw();
 	redBall->draw();
+	//ceu->draw();
+}
+
+void enableFog(bool flag) {
+	if (flag) {
+		tigl::shader->enableFog(true);
+		tigl::shader->setFogLinear(1, 4);
+		tigl::shader->setFogExp(.15f);
+	}
+	else {
+		tigl::shader->enableFog(false);
+	}
 }

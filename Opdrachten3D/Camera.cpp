@@ -18,12 +18,8 @@ glm::mat4 Camera::getMatrix()
 	glm::mat4 ret(1.0f);
 	ret = glm::rotate(ret, rotation.x, glm::vec3(1, 0, 0));
 	ret = glm::rotate(ret, rotation.y, glm::vec3(0, 1, 0));
-	//ret = glm::translate(ret, position + glm::vec3(0,0,-distanceToObject));
-	//return ret;
 
-	// Calculate the camera position based on the rotation, distance, and the player's position
 	glm::vec3 cameraPosition;
-
 	if (activePlayer)
 	{
 		glm::vec3 playerTwoPosition = playerTwo->getPosition() + glm::vec3(0, 1.f, 0);
@@ -40,8 +36,8 @@ glm::mat4 Camera::getMatrix()
 		glm::vec4 rotatedOffset = rotationMatrix * glm::vec4(offset, 1.0f);
 		cameraPosition = playerOnePosition + glm::vec3(rotatedOffset);
 	}
-
 	ret = glm::translate(ret, -cameraPosition);
+
 	return ret;
 }
 

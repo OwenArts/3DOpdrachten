@@ -3,31 +3,17 @@
 Ball::Ball(std::string filePath)
 {
 	path = filePath;
-}
-
-int Ball::init_ball()
-{
-	try
-	{
-		std::cout << "Path: " << path << std::endl;
-		model = new ObjModel(path);
-		return 0;
-	}
-	catch (const std::exception& ex) {
-		std::cout << ex.what();
-		return -1;
-	}
+	model = new ObjModel(path);
 }
 
 void Ball::move(glm::vec2 direction, float speed)
 {
-	position.x += (direction.x * speed);
-	position.z += (direction.y * speed);
+	this->direction = direction;
+	this->speed = speed;
 }
 
 void Ball::draw()
 {
-
 	glm::mat4 modelMatrix(1.0f);
 	modelMatrix = glm::translate(modelMatrix, position);
 	modelMatrix = glm::rotate(modelMatrix, direction.x, glm::vec3(1, 0, 0));
@@ -43,7 +29,22 @@ glm::vec3 Ball::getPosition()
 }
 
 
-void Ball::update()
-{
+void Ball::update(float deltaTime)
+	{
+		if (speed > 0.05f)
+		{
+			position.x += (direction.x * speed * deltaTime);
+			position.z += (direction.y * speed * deltaTime);
+			speed -= 0.01f;
+			std::cout << speed << std::endl;
+		}
+		else
+		{
+			speed = 0;
+		}
+}
 
+float Ball::getSpeed()
+{
+	return speed;
 }

@@ -12,11 +12,11 @@ public:
 	ObjModel* model;
 
 	Ball(std::string filePath);
-	int init_ball();
-	void update();
+	void update(float deltaTime);
 	void draw();
 	void move(glm::vec2 direction, float speed);
 	glm::vec3 getPosition();
+	float getSpeed();
 
 protected:
 	std::string path;
