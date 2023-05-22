@@ -10,15 +10,18 @@
 #include "YellowBall.h"
 #include "RedBall.h"
 #include "Ball.h"
+#include "Ceu.h"
+
 /* TODO:
 *	Bal toevoegen (ball.cpp, white-, red-, yellowball.cpp)						DONE
 *	Bal logica (locatie, richting, snelheid (afnemend), botsing, etc)
+*	Camera laten bewegen om juiste bal											DONE
 *	Afmetigen tafel
 *	Collision met tafel
-*	Stok toevoegen (ceu.cpp)
+*	Stok toevoegen (ceu.cpp) (aanmaken in blender)
 *	Stok logica (afschieten, richting laten bepalen door gebruiker, etc)
 *	Belichting
-*	Automatisch bewegend object
+*	Automatisch bewegend object (Keu)
 *	Speler object laten bedienen (zie `Stok logica`)
 */
 
@@ -32,11 +35,12 @@ GLFWwindow* window;
 
 ObjModel* biljartTalbe[3];
 Camera* camera;
+Ceu* ceu;
 float rotation = 0;
 WhiteBall* whiteBall = new WhiteBall("models/ball/WhiteBall.obj");
 RedBall* redBall = new RedBall("models/ball/RedBall.obj");
 YellowBall* yellowBall = new YellowBall("models/ball/YellowBall.obj");
-bool activePlayer = true;	//false on whiteball, true on yellowball
+bool activePlayer = false;	//false on whiteball, true on yellowball
 
 void init();
 void update();
@@ -91,6 +95,7 @@ void init()
 	yellowBall->init_ball();
 	redBall->init_ball();
 	camera = new Camera(window, whiteBall, yellowBall);
+	ceu = new Ceu(*camera);
 }
 
 void update()

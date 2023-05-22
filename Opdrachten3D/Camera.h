@@ -11,6 +11,9 @@ public:
 
 	glm::mat4 getMatrix();
 	void update(GLFWwindow*, bool activePlayer);
+	glm::vec3 getPosition();
+	glm::vec2 getRotation();
+
 
 private:
 	glm::vec3 position = glm::vec3(0, -3, 0);	// -3 to be above the table and ball

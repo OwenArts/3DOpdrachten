@@ -13,7 +13,6 @@ Camera::Camera(GLFWwindow* window, Ball* ball1, Ball* ball2)
 		glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
 }
 
-
 glm::mat4 Camera::getMatrix()
 {
 	glm::mat4 ret(1.0f);
@@ -68,31 +67,16 @@ void Camera::update(GLFWwindow* window, bool activePlayer)
 
 	rotation.y -= (float)(lastX - x) / 100.0f;
 
-	//std::cout << rotation.y << std::endl;
 
-	lastX = x;/*
-	if (activePlayer)
-	{
-		position.x = -playerTwo->getPosition().x;
-		position.z = -playerTwo->getPosition().z;
-	}
-	else
-	{
-		position.x = -playerOne->getPosition().x;
-		position.z = -playerOne->getPosition().z;
-	}*/
+	lastX = x;
+}
 
 
-	// Adds the movement via awsd - REMOVED
-	/*
-	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-		move(0, 0.05f);
-	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-		move(180, 0.05f);
-	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-		move(90, 0.05f);
-	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-		move(-90, 0.05f);
-	*/
-
+glm::vec3 Camera::getPosition() 
+{
+	return position;
+}
+glm::vec2 Camera::getRotation()
+{
+	return rotation;
 }

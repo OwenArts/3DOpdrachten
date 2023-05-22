@@ -170,6 +170,7 @@
   <ItemGroup>
     <ClInclude Include="Ball.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="Ceu.h" />
     <ClInclude Include="ObjModel.h" />
     <ClInclude Include="RedBall.h" />
     <ClInclude Include="stb_image.h" />
