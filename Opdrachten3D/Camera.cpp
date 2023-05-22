@@ -1,17 +1,20 @@
-#include "FpsCam.h"
+#include "Camera.h"
 #include <GLFW/glfw3.h>
 #include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
 
-FpsCam::FpsCam(GLFWwindow* window)
+Camera::Camera(GLFWwindow* window, Ball* ball1, Ball* ball2)
 {
+	playerOne = ball1;
+	playerTwo = ball2;
+
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	if (glfwRawMouseMotionSupported())
 		glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
 }
 
 
-glm::mat4 FpsCam::getMatrix()
+glm::mat4 Camera::getMatrix()
 {
 	glm::mat4 ret(1.0f);
 	ret = glm::rotate(ret, rotation.x, glm::vec3(1, 0, 0));
@@ -20,27 +23,36 @@ glm::mat4 FpsCam::getMatrix()
 	return ret;
 }
 
-void FpsCam::move(float angle, float fac)
+void Camera::move(float angle, float fac)
 {
 	position.x += (float)cos(rotation.y + glm::radians(angle)) * fac;
 	position.z += (float)sin(rotation.y + glm::radians(angle)) * fac;
 }
 
 
-void FpsCam::update(GLFWwindow* window)
+void Camera::update(GLFWwindow* window, bool activePlayer)
 {
+	if (activePlayer)
+	{
+		position.x = -playerTwo->getPosition().x;
+		position.z = -playerTwo->getPosition().z;
+	}
+	else
+	{
+		position.x = -playerOne->getPosition().x;
+		position.z = -playerOne->getPosition().z;
+	}
+
 	double x, y;
 	glfwGetCursorPos(window, &x, &y);
 
 	static double lastX = x;
-	//static double lastY = y;
 
 	if ((glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) || (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)) // Rotate to the right on pressing Left arrow or A
 		lastX = x + 5;
 	if ((glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) || (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)) // Rotate to the right on pressing right arrow or D
 		lastX = x - 5;
 
-	//rotation.x -= (float)(lastY - y) / 100.0f;
 	rotation.y -= (float)(lastX - x) / 100.0f;
 
 	lastX = x;
@@ -57,4 +69,5 @@ void FpsCam::update(GLFWwindow* window)
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
 		move(-90, 0.05f);
 	*/
+
 }

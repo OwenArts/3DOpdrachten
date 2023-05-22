@@ -5,10 +5,11 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
 
-#include "FpsCam.h"
+#include "Camera.h"
 #include "WhiteBall.h"
-#include "FpsCam.h"
-
+#include "YellowBall.h"
+#include "RedBall.h"
+#include "Ball.h"
 /* TODO:
 *	Bal toevoegen (ball.cpp, white-, red-, yellowball.cpp)						DONE
 *	Bal logica (locatie, richting, snelheid (afnemend), botsing, etc)
@@ -30,11 +31,12 @@ using tigl::Vertex;
 GLFWwindow* window;
 
 ObjModel* biljartTalbe[3];
-FpsCam* camera;
+Camera* camera;
 float rotation = 0;
-WhiteBall whiteBall = WhiteBall("models/ball/WhiteBall.obj");
-WhiteBall redBall = WhiteBall("models/ball/RedBall.obj");
-WhiteBall yellowBall = WhiteBall("models/ball/YellowBall.obj");
+WhiteBall* whiteBall = new WhiteBall("models/ball/WhiteBall.obj");
+RedBall* redBall = new RedBall("models/ball/RedBall.obj");
+YellowBall* yellowBall = new YellowBall("models/ball/YellowBall.obj");
+bool activePlayer = false;	//false on whiteball, true on yellowball
 
 void init();
 void update();
@@ -85,15 +87,15 @@ void init()
 	biljartTalbe[0] = new ObjModel("models/biljart/Biljart_table.obj");
 	biljartTalbe[1] = new ObjModel("models/biljart/Biljart_edge.obj");
 	biljartTalbe[2] = new ObjModel("models/biljart/Biljart_cloth.obj");
-	whiteBall.init_ball();
-	yellowBall.init_ball();
-	redBall.init_ball();
-	camera = new FpsCam(window);
+	whiteBall->init_ball();
+	yellowBall->init_ball();
+	redBall->init_ball();
+	camera = new Camera(window, whiteBall, yellowBall);
 }
 
 void update()
 {
-	camera->update(window);
+	camera->update(window, activePlayer);
 }
 
 void draw()
@@ -115,7 +117,7 @@ void draw()
 
 	for (auto& model : biljartTalbe)
 		model->draw();
-	whiteBall.model->draw();
-	yellowBall.model->draw();
-	redBall.model->draw();
+	whiteBall->draw();
+	yellowBall->draw();
+	redBall->draw();
 }

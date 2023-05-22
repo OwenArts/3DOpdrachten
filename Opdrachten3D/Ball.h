@@ -1,33 +1,26 @@
 #pragma once
 #include <glm/glm.hpp>
 #include "iostream"
+#include <glm/gtc/matrix_transform.hpp>
 #include "ObjModel.h"
-
+#include "tigl.h"
+#include <string>
 
 class Ball
 {
-private:
-	float speed;
-	glm::vec3 location;
-
 public:
-	virtual int init_ball() {
-		try
-		{
-			std::cout << "Loading..." << std::endl;
-			return 0;
-		}
-		catch (const std::exception& ex) {
-			std::cout << ex.what();
-			return -1;
-		}
-	}
+	ObjModel* model;
 
-	void move(glm::vec2 direction, float speed)
-	{
+	Ball(std::string filePath);
+	int init_ball();
+	void update();
+	void draw();
+	void move(glm::vec2 direction, float speed);
+	glm::vec3 getPosition();
 
-		// TODO: test
-		location.x = location.x * direction.x * speed;
-		location.y = location.y * direction.y * speed;
-	}
+protected:
+	std::string path;
+	float speed;
+	glm::vec3 position = glm::vec3(0, 2, 0);
+	glm::vec2 direction = glm::vec2(0, 0);
 };
