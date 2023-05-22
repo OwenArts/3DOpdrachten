@@ -1,1 +1,1 @@
-## Simple Biljart
+## Three cushion billiard OpenGL
