@@ -33,7 +33,7 @@ void Ball::update(float deltaTime)
 	{
 		if (speed > 0.05f)
 		{
-			direction.x -= 0.4f;									//Too buggy
+			//direction.x -= 0.4f;									//Too buggy
 			// 0f (0) <= y <= 6.3f (360)
 			position.x += (-sin(direction.y) * speed * deltaTime);
 			position.z += (cos(direction.y) * speed * deltaTime);
