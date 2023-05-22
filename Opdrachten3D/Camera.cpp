@@ -62,6 +62,10 @@ void Camera::update(GLFWwindow* window, bool activePlayer)
 		lastX = x - 5;
 
 	rotation.y -= (float)(lastX - x) / 100.0f;
+	if (rotation.y < 0)
+		rotation.y = 6.3f - fmod(rotation.y, 6.3f);
+	else
+		rotation.y = fmod(rotation.y, 6.3f);
 
 
 	lastX = x;

@@ -41,7 +41,7 @@ float rotation = 0;
 WhiteBall* whiteBall;
 RedBall* redBall;
 YellowBall* yellowBall;
-bool activePlayer = true;	//false on whiteball, true on yellowball
+bool activePlayer = false;	//false on whiteball, true on yellowball
 double lastFrameTime = 0;
 
 void init();
@@ -93,21 +93,13 @@ void init()
 		{
 			if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS && !activePlayer)
 			{
-				std::cout << "whiteball pressed" << std::endl;
 				if (whiteBall->getSpeed() < 0.05f)
-				{
-					std::cout << "whiteball adding movement" << std::endl;
-					whiteBall->move(glm::vec2(0, 1.f), 3.f);
-				}
+					whiteBall->move(camera->getRotation(), 3.f);
 			}
 			if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS && activePlayer)
 			{
-				std::cout << "yellowball pressed" << std::endl;
 				if (yellowBall->getSpeed() < 0.05f)
-				{
-					std::cout << "yellowball adding movement" << std::endl;
-					yellowBall->move(glm::vec2(0, 1.f), 3.f);
-				}
+					yellowBall->move(camera->getRotation(), 3.f);
 			}
 		});
 	// Load all moddels
