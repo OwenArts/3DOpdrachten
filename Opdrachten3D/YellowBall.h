@@ -8,5 +8,5 @@ private:
 	int cushions_touched;
 public:
 
-	YellowBall(std::string filePath);
+	YellowBall(std::string filePath, std::string tag);
 };

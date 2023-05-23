@@ -86,9 +86,6 @@
     <ClInclude Include="Texture.h">
       <Filter>Header Files\object</Filter>
     </ClInclude>
-    <ClInclude Include="Table.h">
-      <Filter>Header Files\object</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="Config.txt" />

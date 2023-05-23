@@ -138,8 +138,8 @@ void update()
 	CheckForCollisionTable(*yellowBall);
 	CheckForCollisionTable(*redBall);
 	CheckForCollisionBall(*whiteBall, *yellowBall);
-	//CheckForCollisionBall(*whiteBall, *redBall);
-	//CheckForCollisionBall(*yellowBall, *redBall);
+	CheckForCollisionBall(*whiteBall, *redBall);
+	CheckForCollisionBall(*yellowBall, *redBall);
 }
 
 void draw()
@@ -201,38 +201,42 @@ void enableLight(bool state)
 
 void CheckForCollisionBall(Ball& one, Ball& two)
 {
-	if (one.getSpeed() != 0)
-	{
-		std::cout << "[ORIGINAL]	ball1 [" << round(one.getPosition().x * 10.0) / 10.0 << "," << round(one.getPosition().z * 10.0) / 10.0 << "], ball2 [" << round(two.getPosition().x * 10.0) / 10.0 << "," << round(two.getPosition().z * 10.0) / 10.0 << "]" << std::endl;
-		std::cout << "[IF STATEMENT] ball1 [" << round(one.getPosition().x * 10.0) / 10.0 << "," << round(one.getPosition().z * 10.0) / 10.0 << "], ball2 (-) [" << round(two.getPosition().x * 10.0) / 10.0 - 0.15f << "," << round(two.getPosition().z * 10.0) / 10.0 - 0.15f << "], ball2 (+) [" << round(two.getPosition().x * 10.0) / 10.0 + 0.15f << "," << round(two.getPosition().z * 10.0) / 10.0 + 1.f << "]" << std::endl;
-		//std::cout << "[IF STATEMENT] (x) condition 1 [" << (round(one.getPosition().x * 10.f) / 10.f <= (round(two.getPosition().x * 10.f) / 10.f)) << "]" << std::endl;
-		//std::cout << "[IF STATEMENT] (x) condition 2 [" << (round(one.getPosition().x * 10.f) / 10.f >= (round(two.getPosition().x * 10.f) / 10.f)) << "]" << std::endl;
-		//std::cout << "[IF STATEMENT] (x) condition 1&2 [" << (round(one.getPosition().x * 10.f) / 10.f <= (round(two.getPosition().x * 10.f) / 10.f) && round(one.getPosition().x * 10.f) / 10.f >= (round(two.getPosition().x * 10.f) / 10.f)) << "]" << std::endl;
-		std::cout << "[IF STATEMENT] (y) condition 1 [" << (round(one.getPosition().z * 10.f) / 10.f <= round(two.getPosition().z * 10.f) / 10.f) << "]" << std::endl;
-		std::cout << "[IF STATEMENT] (y) condition 2 [" << (round(one.getPosition().z * 10.f) / 10.f >= round(two.getPosition().z * 10.f) / 10.f) << "]" << std::endl;
-		std::cout << "[IF STATEMENT] (y) condition 1&2 [" << (round(one.getPosition().z * 10.f) / 10.f <= round(two.getPosition().z * 10.f) / 10.f && round(one.getPosition().z * 10.f) / 10.f >= round(two.getPosition().z * 10.f) / 10.f) << "]" << std::endl;
-		std::cout << "--------------------------------------------------------------------------" << std::endl;
-	}
-	/*
-	bool collisionX = round(one.getPosition().x * 10.0) / 10.0 >= round(two.getPosition().x * 10.0) / 10.0 && round(two.getPosition().x * 10.0) / 10.0 >= round(one.getPosition().x * 10.0) / 10.0;
-	bool collisionZ = round(one.getPosition().z * 10.0) / 10.0 >= round(two.getPosition().z * 10.0) / 10.0 && round(two.getPosition().z * 10.0) / 10.0 >= round(one.getPosition().z * 10.0) / 10.0;
-	std::cout << "Collision on x-axis: " << collisionX << ", collision on z-axis: " << collisionZ << std::endl;
-	*/
+	bool collisionX = false;
+	bool collisionZ = false;
 
-	if (round(one.getPosition().x * 10.f) / 10.f <= round(two.getPosition().x * 10.f) / 10.f &&
-		round(one.getPosition().x * 10.f) / 10.f >= round(two.getPosition().x * 10.f) / 10.f)
+	//if (one.getSpeed() != 0)
+	//{
+	//	std::cout << "[ORIGINAL]	ball1 [" << round(one.getPosition().x * 10.0) / 10.0 << "," << round(one.getPosition().z * 10.0) / 10.0 << "], ball2 [" << round(two.getPosition().x * 10.0) / 10.0 << "," << round(two.getPosition().z * 10.0) / 10.0 << "]" << std::endl;
+	//	std::cout << "[IF STATEMENT] (x) condition 1 [" << (round(one.getPosition().x * 10.f) / 10.f < (round(two.getPosition().x * 10.f) / 10.f) - 0.1f) << "]" << std::endl;
+	//	std::cout << "[IF STATEMENT] (x) condition 2 [" << (round(one.getPosition().x * 10.f) / 10.f > (round(two.getPosition().x * 10.f) / 10.f) + 0.1f) << "]" << std::endl;
+	//	std::cout << "[IF STATEMENT] (x) condition 1&2 [" << ((round(one.getPosition().x * 10.f) / 10.f < round(two.getPosition().x * 10.f) / 10.f && round(one.getPosition().x * 10.f) / 10.f > round(two.getPosition().x * 10.f) / 10.f) || round(one.getPosition().x * 10.f) / 10.f == round(two.getPosition().x * 10.f) / 10.f) << "]" << std::endl;
+	//	std::cout << "[IF STATEMENT] (y) condition 1 [" << (round(one.getPosition().z * 10.f) / 10.f <= round(two.getPosition().z * 10.f) / 10.f - 0.1f) << "]" << std::endl;
+	//	std::cout << "[IF STATEMENT] (y) condition 2 [" << (round(one.getPosition().z * 10.f) / 10.f >= round(two.getPosition().z * 10.f) / 10.f + 0.1f) << "]" << std::endl;
+	//	std::cout << "[IF STATEMENT] (y) condition 1&2 [" << (round(one.getPosition().z * 10.f) / 10.f <= round(two.getPosition().z * 10.f) / 10.f && round(one.getPosition().z * 10.f) / 10.f >= round(two.getPosition().z * 10.f) / 10.f) << "]" << std::endl;
+	//	std::cout << "--------------------------------------------------------------------------" << std::endl;
+	//}
+
+	if ((round(one.getPosition().x * 10.f) / 10.f < round(two.getPosition().x * 10.f) / 10.f - 0.f &&
+		round(one.getPosition().x * 10.f) / 10.f > round(two.getPosition().x * 10.f) / 10.f) + 0.f ||
+		round(one.getPosition().x * 10.f) / 10.f == round(two.getPosition().x * 10.f) / 10.f)
 	{
-		std::cout << "+++++++++++++++++++++++++++++++++++++++++++++++" << std::endl;
-		std::cout << "contact on x" << std::endl;
-		std::cout << "+++++++++++++++++++++++++++++++++++++++++++++++" << std::endl;
+		collisionX = true;
 	}
 
-	if (round(one.getPosition().z * 10.f) / 10.f <= round(two.getPosition().z * 10.f) / 10.f &&
-		round(one.getPosition().z * 10.f) / 10.f >= round(two.getPosition().z * 10.f) / 10.f)
+	if ((round(one.getPosition().z * 10.f) / 10.f < round(two.getPosition().z * 10.f) / 10.f - 0.1f &&
+		round(one.getPosition().z * 10.f) / 10.f > round(two.getPosition().z * 10.f) / 10.f) + 0.1f ||
+		round(one.getPosition().z * 10.f) / 10.f == round(two.getPosition().z * 10.f) / 10.f)
 	{
-		std::cout << "+++++++++++++++++++++++++++++++++++++++++++++++" << std::endl;
-		std::cout << "contact on z" << std::endl;
-		std::cout << "+++++++++++++++++++++++++++++++++++++++++++++++" << std::endl;
+		collisionZ = true;
+	}
+	if (collisionX && collisionZ)
+	{
+		if (one.getSpeed() > two.getSpeed())
+		{
+			glm::vec2 direction = one.getDirection();
+			two.move(direction, one.getSpeed() - 0.5f);
+
+		}
 	}
 }
 
