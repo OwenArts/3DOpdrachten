@@ -1,6 +1,6 @@
 #include "ball.h"
 
-Ball::Ball(std::string filePath, ObjModel* tableEdge)
+Ball::Ball(std::string filePath)
 {
 	path = filePath;
 	model = new ObjModel(path);

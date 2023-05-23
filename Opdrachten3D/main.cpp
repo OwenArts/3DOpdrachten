@@ -17,14 +17,14 @@
 *	Bal logica (locatie, richting, snelheid (afnemend), botsing, etc)			DONE (richting, snelheid)
 *	Camera laten bewegen om juiste bal											DONE
 *	Afmetigen tafel																DONE
-*	Collision met randen tafel													DONE 
-*	Collision met andere ballen									 
+*	Collision met randen tafel													DONE
+*	Collision met andere ballen													w.i.p.
 *	Stok logica (afschieten, richting laten bepalen door gebruiker, etc)		DONE (afschieten muisklik, richting dmv a,d, pijlknoppen en muis)
 *	Belichting																	DONE
 *	mist/fog																	DONE
 *	Automatisch bewegend object (Keu of bal laten rollen)
 *	Speler object laten bedienen (zie `Stok logica`)							DONE
-*	Stok toevoegen (ceu.cpp) (aanmaken in blender)								DONE - REMOVED CAUSE BUGS, SHIFTED TO END OF PROJECT
+*	Stok toevoegen (ceu.cpp) (aanmaken in blender)								w.i.p. - REMOVED CAUSE BUGS, SHIFTED TO END OF PROJECT
 */
 
 using tigl::Vertex;
@@ -94,10 +94,6 @@ void init()
 		});
 	glfwSetMouseButtonCallback(window, [](GLFWwindow* window, int button, int action, int mods)
 		{
-			if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS)
-			{
-				std::cout << camera->getPosition().x << ", " << camera->getPosition().z << std::endl;
-			}
 			if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS && !activePlayer)
 			{
 				if (whiteBall->getSpeed() < 0.05f)
@@ -109,13 +105,14 @@ void init()
 					yellowBall->move(camera->getRotation(), 3.f);
 			}
 		});
+
 	// Load all moddels
 	biljartTable[0] = new ObjModel("models/biljard/Biljart_table.obj");
 	biljartTable[1] = new ObjModel("models/biljard/Biljart_edge.obj");
 	biljartTable[2] = new ObjModel("models/biljard/Biljart_cloth.obj");
-	whiteBall = new WhiteBall("models/ball/WhiteBall.obj", biljartTable[1]);
-	redBall = new RedBall("models/ball/RedBall.obj", biljartTable[1]);
-	yellowBall = new YellowBall("models/ball/YellowBall.obj", biljartTable[1]);
+	whiteBall = new WhiteBall("models/ball/WhiteBall.obj");
+	redBall = new RedBall("models/ball/RedBall.obj");
+	yellowBall = new YellowBall("models/ball/YellowBall.obj");
 	camera = new Camera(window, whiteBall, yellowBall);
 	ceu = new Ceu(*camera, "models/ceu/Ceu.obj");
 }
@@ -126,7 +123,7 @@ void update()
 	float deltaTime = lastFrameTime - frameTime;
 	lastFrameTime = frameTime;
 
-	if (!activePlayer && (whiteBall->getSpeed() <= 0.05f && whiteBall->getSpeed() > 0)) 
+	if (!activePlayer && (whiteBall->getSpeed() <= 0.05f && whiteBall->getSpeed() > 0))
 		activePlayer = !activePlayer;
 	if (activePlayer && (yellowBall->getSpeed() <= 0.05f && yellowBall->getSpeed() > 0))
 		activePlayer = !activePlayer;
@@ -140,6 +137,9 @@ void update()
 	CheckForCollisionTable(*whiteBall);
 	CheckForCollisionTable(*yellowBall);
 	CheckForCollisionTable(*redBall);
+	CheckForCollisionBall(*whiteBall, *yellowBall);
+	//CheckForCollisionBall(*whiteBall, *redBall);
+	//CheckForCollisionBall(*yellowBall, *redBall);
 }
 
 void draw()
@@ -170,7 +170,7 @@ void draw()
 	//ceu->draw();
 }
 
-void enableFog(bool state) 
+void enableFog(bool state)
 {
 	if (state) {
 		tigl::shader->enableFog(true);
@@ -182,7 +182,7 @@ void enableFog(bool state)
 	}
 }
 
-void enableLight(bool state) 
+void enableLight(bool state)
 {
 	if (state) {
 		tigl::shader->enableLighting(true);
@@ -191,7 +191,7 @@ void enableLight(bool state)
 		tigl::shader->setLightPosition(0, glm::vec3(0, 25, 0));
 		tigl::shader->setLightAmbient(0, glm::vec3(0.1f, 0.1f, 0.15f));
 		tigl::shader->setLightDiffuse(0, glm::vec3(0.8f, 0.8f, 0.8f));
-		tigl::shader->setLightSpecular(0, glm::vec3(225.f/255, 159.f/255, 0));
+		tigl::shader->setLightSpecular(0, glm::vec3(225.f / 255, 159.f / 255, 0));
 		tigl::shader->setShinyness(5.f);
 	}
 	else {
@@ -201,11 +201,39 @@ void enableLight(bool state)
 
 void CheckForCollisionBall(Ball& one, Ball& two)
 {
-	//std::cout <<  "ball1 x: " <<round(one.getPosition().x * 10.0) / 10.0<< ", z:" << round(one.getPosition().z * 10.0) / 10.0 << ", ball2 x: " << round(two.getPosition().x * 10.0) / 10.0 << ", z:" << round(two.getPosition().z * 10.0) / 10.0 << std::endl;
+	if (one.getSpeed() != 0)
+	{
+		std::cout << "[ORIGINAL]	ball1 [" << round(one.getPosition().x * 10.0) / 10.0 << "," << round(one.getPosition().z * 10.0) / 10.0 << "], ball2 [" << round(two.getPosition().x * 10.0) / 10.0 << "," << round(two.getPosition().z * 10.0) / 10.0 << "]" << std::endl;
+		std::cout << "[IF STATEMENT] ball1 [" << round(one.getPosition().x * 10.0) / 10.0 << "," << round(one.getPosition().z * 10.0) / 10.0 << "], ball2 (-) [" << round(two.getPosition().x * 10.0) / 10.0 - 0.15f << "," << round(two.getPosition().z * 10.0) / 10.0 - 0.15f << "], ball2 (+) [" << round(two.getPosition().x * 10.0) / 10.0 + 0.15f << "," << round(two.getPosition().z * 10.0) / 10.0 + 1.f << "]" << std::endl;
+		//std::cout << "[IF STATEMENT] (x) condition 1 [" << (round(one.getPosition().x * 10.f) / 10.f <= (round(two.getPosition().x * 10.f) / 10.f)) << "]" << std::endl;
+		//std::cout << "[IF STATEMENT] (x) condition 2 [" << (round(one.getPosition().x * 10.f) / 10.f >= (round(two.getPosition().x * 10.f) / 10.f)) << "]" << std::endl;
+		//std::cout << "[IF STATEMENT] (x) condition 1&2 [" << (round(one.getPosition().x * 10.f) / 10.f <= (round(two.getPosition().x * 10.f) / 10.f) && round(one.getPosition().x * 10.f) / 10.f >= (round(two.getPosition().x * 10.f) / 10.f)) << "]" << std::endl;
+		std::cout << "[IF STATEMENT] (y) condition 1 [" << (round(one.getPosition().z * 10.f) / 10.f <= round(two.getPosition().z * 10.f) / 10.f) << "]" << std::endl;
+		std::cout << "[IF STATEMENT] (y) condition 2 [" << (round(one.getPosition().z * 10.f) / 10.f >= round(two.getPosition().z * 10.f) / 10.f) << "]" << std::endl;
+		std::cout << "[IF STATEMENT] (y) condition 1&2 [" << (round(one.getPosition().z * 10.f) / 10.f <= round(two.getPosition().z * 10.f) / 10.f && round(one.getPosition().z * 10.f) / 10.f >= round(two.getPosition().z * 10.f) / 10.f) << "]" << std::endl;
+		std::cout << "--------------------------------------------------------------------------" << std::endl;
+	}
+	/*
 	bool collisionX = round(one.getPosition().x * 10.0) / 10.0 >= round(two.getPosition().x * 10.0) / 10.0 && round(two.getPosition().x * 10.0) / 10.0 >= round(one.getPosition().x * 10.0) / 10.0;
 	bool collisionZ = round(one.getPosition().z * 10.0) / 10.0 >= round(two.getPosition().z * 10.0) / 10.0 && round(two.getPosition().z * 10.0) / 10.0 >= round(one.getPosition().z * 10.0) / 10.0;
-	//std::cout << "Collision on x-axis: " << collisionX << ", collision on z-axis: " << collisionZ << std::endl;
-	//return collisionX && collisionZ;
+	std::cout << "Collision on x-axis: " << collisionX << ", collision on z-axis: " << collisionZ << std::endl;
+	*/
+
+	if (round(one.getPosition().x * 10.f) / 10.f <= round(two.getPosition().x * 10.f) / 10.f &&
+		round(one.getPosition().x * 10.f) / 10.f >= round(two.getPosition().x * 10.f) / 10.f)
+	{
+		std::cout << "+++++++++++++++++++++++++++++++++++++++++++++++" << std::endl;
+		std::cout << "contact on x" << std::endl;
+		std::cout << "+++++++++++++++++++++++++++++++++++++++++++++++" << std::endl;
+	}
+
+	if (round(one.getPosition().z * 10.f) / 10.f <= round(two.getPosition().z * 10.f) / 10.f &&
+		round(one.getPosition().z * 10.f) / 10.f >= round(two.getPosition().z * 10.f) / 10.f)
+	{
+		std::cout << "+++++++++++++++++++++++++++++++++++++++++++++++" << std::endl;
+		std::cout << "contact on z" << std::endl;
+		std::cout << "+++++++++++++++++++++++++++++++++++++++++++++++" << std::endl;
+	}
 }
 
 void CheckForCollisionTable(Ball& ball)
@@ -216,7 +244,7 @@ void CheckForCollisionTable(Ball& ball)
 	*	X = -1.81101,	Z =  2.78461	-	RECHTS BOVEN (VANAF STARTPUNT)
 	*	X = 1.80754,	Z =  2.73023	-	LINKS BOVEN (VANAF STARTPUNT)
 	*	X = 1.81428,	Z = -2.81266	-	lINKS ONDER (VANAF STARTPUNT)
-	* 
+	*
 	*  AFGEROND - COORDS HOEKEN TAFEL
 	*	X = -1.81,	Z = -2.80 	-	RECHTS ONDER (VANAF STARTPUNT)
 	*	X = -1.81,	Z =  2.80	-	RECHTS BOVEN (VANAF STARTPUNT)
@@ -228,7 +256,7 @@ void CheckForCollisionTable(Ball& ball)
 	float upperWall = 2.80f;
 	float lowerWall = -2.80f;
 	glm::vec3 coords = ball.getPosition();
-	
+
 	if (coords.x >= leftWall || coords.x <= rightWall) ball.changeDirection(false, true);
 	if (coords.z >= upperWall || coords.z <= lowerWall) ball.changeDirection(true, false);
 }

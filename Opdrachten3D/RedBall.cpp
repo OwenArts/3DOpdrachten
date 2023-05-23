@@ -1,4 +1,4 @@
 #include "RedBall.h"
 
-RedBall::RedBall(std::string filePath, ObjModel* tableEdge) : Ball(filePath, tableEdge) {
+RedBall::RedBall(std::string filePath) : Ball(filePath) {
 }
