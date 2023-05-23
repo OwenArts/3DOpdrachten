@@ -18,13 +18,14 @@
 *	Camera laten bewegen om juiste bal											DONE
 *	Afmetigen tafel																DONE
 *	Collision met randen tafel													DONE
-*	Collision met andere ballen													w.i.p.
+*	Collision met andere ballen													DONE - still buggy
 *	Stok logica (afschieten, richting laten bepalen door gebruiker, etc)		DONE (afschieten muisklik, richting dmv a,d, pijlknoppen en muis)
 *	Belichting																	DONE
 *	mist/fog																	DONE
 *	Automatisch bewegend object (Keu of bal laten rollen)
 *	Speler object laten bedienen (zie `Stok logica`)							DONE
 *	Stok toevoegen (ceu.cpp) (aanmaken in blender)								w.i.p. - REMOVED CAUSE BUGS, SHIFTED TO END OF PROJECT
+*	Particle toevoegen onder ballen
 */
 
 using tigl::Vertex;
@@ -97,12 +98,12 @@ void init()
 			if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS && !activePlayer)
 			{
 				if (whiteBall->getSpeed() < 0.05f)
-					whiteBall->move(camera->getRotation(), 3.f);
+					whiteBall->move(camera->getRotation().y, 3.f);
 			}
 			if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS && activePlayer)
 			{
 				if (yellowBall->getSpeed() < 0.05f)
-					yellowBall->move(camera->getRotation(), 3.f);
+					yellowBall->move(camera->getRotation().y, 3.f);
 			}
 		});
 
@@ -110,9 +111,9 @@ void init()
 	biljartTable[0] = new ObjModel("models/biljard/Biljart_table.obj");
 	biljartTable[1] = new ObjModel("models/biljard/Biljart_edge.obj");
 	biljartTable[2] = new ObjModel("models/biljard/Biljart_cloth.obj");
-	whiteBall = new WhiteBall("models/ball/WhiteBall.obj");
-	redBall = new RedBall("models/ball/RedBall.obj");
-	yellowBall = new YellowBall("models/ball/YellowBall.obj");
+	whiteBall = new WhiteBall("models/ball/WhiteBall.obj", "WhiteBall");
+	redBall = new RedBall("models/ball/RedBall.obj", "RedBall");
+	yellowBall = new YellowBall("models/ball/YellowBall.obj", "YellowBall");
 	camera = new Camera(window, whiteBall, yellowBall);
 	ceu = new Ceu(*camera, "models/ceu/Ceu.obj");
 }
@@ -203,6 +204,7 @@ void CheckForCollisionBall(Ball& one, Ball& two)
 {
 	bool collisionX = false;
 	bool collisionZ = false;
+	float radius = 0.25f;
 
 	//if (one.getSpeed() != 0)
 	//{
@@ -216,15 +218,15 @@ void CheckForCollisionBall(Ball& one, Ball& two)
 	//	std::cout << "--------------------------------------------------------------------------" << std::endl;
 	//}
 
-	if ((round(one.getPosition().x * 10.f) / 10.f < round(two.getPosition().x * 10.f) / 10.f - 0.f &&
-		round(one.getPosition().x * 10.f) / 10.f > round(two.getPosition().x * 10.f) / 10.f) + 0.f ||
+	if ((round(one.getPosition().x * 10.f) / 10.f < round(two.getPosition().x * 10.f) / 10.f + radius &&
+		round(one.getPosition().x * 10.f) / 10.f > round(two.getPosition().x * 10.f) / 10.f - radius) ||
 		round(one.getPosition().x * 10.f) / 10.f == round(two.getPosition().x * 10.f) / 10.f)
 	{
 		collisionX = true;
 	}
 
-	if ((round(one.getPosition().z * 10.f) / 10.f < round(two.getPosition().z * 10.f) / 10.f - 0.1f &&
-		round(one.getPosition().z * 10.f) / 10.f > round(two.getPosition().z * 10.f) / 10.f) + 0.1f ||
+	if ((round(one.getPosition().z * 10.f) / 10.f < round(two.getPosition().z * 10.f) / 10.f + radius &&
+		round(one.getPosition().z * 10.f) / 10.f > round(two.getPosition().z * 10.f) / 10.f - radius) ||
 		round(one.getPosition().z * 10.f) / 10.f == round(two.getPosition().z * 10.f) / 10.f)
 	{
 		collisionZ = true;
@@ -235,6 +237,21 @@ void CheckForCollisionBall(Ball& one, Ball& two)
 		{
 			glm::vec2 direction = one.getDirection();
 			two.move(direction, one.getSpeed() - 0.5f);
+			one.setSpeed(one.getSpeed() - 0.5);
+			if (direction.x > direction.y)
+				one.changeDirection(false, true);
+			if (direction.x < direction.y)
+				one.changeDirection(true, false);
+
+		}
+		else if (one.getSpeed() < two.getSpeed())
+		{
+			glm::vec2 direction = two.getDirection();
+			one.move(direction, two.getSpeed() - 0.5f);
+			if (direction.x > direction.y)
+				one.changeDirection(false, true);
+			if (direction.x < direction.y)
+				one.changeDirection(true, false);
 
 		}
 	}
