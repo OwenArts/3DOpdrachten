@@ -9,14 +9,13 @@ Ball::Ball(std::string filePath, std::string tag)
 
 void Ball::move(float direction, float speed)
 {
-	move(glm::vec2(-sin(direction.y), cos(direction.y)), speed);
+	move(glm::vec2(-sin(direction), cos(direction)), speed);
 }
 
 void Ball::move(glm::vec2 direction, float speed)
 {
 	std::cout << tag << " got moved in the following direction [" << direction.x << "," << direction.y << "] with a speed of " << speed << std::endl;
-	this->direction.x = -sin(direction.x);
-	this->direction.y = cos(direction.y);
+	this->direction = direction;
 	this->speed = speed;
 }
 
