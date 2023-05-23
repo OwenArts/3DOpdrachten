@@ -1,6 +1,6 @@
 #include "ball.h"
 
-Ball::Ball(std::string filePath)
+Ball::Ball(std::string filePath, ObjModel* tableEdge)
 {
 	path = filePath;
 	model = new ObjModel(path);
@@ -8,7 +8,8 @@ Ball::Ball(std::string filePath)
 
 void Ball::move(glm::vec2 direction, float speed)
 {
-	this->direction = direction;
+	this->direction.x = -sin(direction.y);
+	this->direction.y = cos(direction.y);
 	this->speed = speed;
 }
 
@@ -30,24 +31,51 @@ glm::vec3 Ball::getPosition()
 
 
 void Ball::update(float deltaTime)
+{
+	if (speed > 0.05f)
 	{
-		if (speed > 0.05f)
-		{
-			//direction.x -= 0.4f;									//Too buggy
-			// 0f (0) <= y <= 6.3f (360)
-			position.x += (-sin(direction.y) * speed * deltaTime);
-			position.z += (cos(direction.y) * speed * deltaTime);
-			speed -= 0.007f;
-			//position.y += -sin(direction.x)/80.f;
-			//std::cout << "Speed: " << speed << ", Direction: [" << direction.x << "(not important), " << direction.y << "], deltatime: " << deltaTime << std::endl;
-		}
-		else
-		{
-			speed = 0;
-		}
+		//direction.x -= 0.4f;									//Too buggy, rotates in front of the obj model instead of own center.
+		// 0f (0°) <= y <= 6.3f (360°)
+		position.x += (direction.x * speed * deltaTime);
+		position.z += (direction.y * speed * deltaTime);
+		speed -= 0.005f;
+	}
+	else
+	{
+		speed = 0;
+	}
 }
 
 float Ball::getSpeed()
 {
 	return speed;
+}
+
+glm::vec2 Ball::getDirection()
+{
+	return direction;
+}
+
+void Ball::setSpeed(float speed)
+{
+	this->speed = speed;
+}
+
+void Ball::setDirection(float direction)
+{
+	this->direction.x = -sin(direction);
+	this->direction.y = cos(direction);
+}
+
+void Ball::setDirection(glm::vec2 direction)
+{
+	this->direction = direction;
+}
+
+void Ball::changeDirection(bool vertical, bool horizontal)
+{
+	if (vertical)
+		direction.y = -direction.y;
+	if (horizontal)
+		direction.x = -direction.x;
 }

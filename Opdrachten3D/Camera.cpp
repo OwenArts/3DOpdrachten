@@ -18,7 +18,8 @@ glm::mat4 Camera::getMatrix()
 	glm::mat4 ret(1.0f);
 	ret = glm::rotate(ret, rotation.x, glm::vec3(1, 0, 0));
 	ret = glm::rotate(ret, rotation.y, glm::vec3(0, 1, 0));
-
+	//ret = glm::translate(ret, position);
+	
 	glm::vec3 cameraPosition;
 	if (activePlayer)
 	{
@@ -55,7 +56,7 @@ void Camera::update(GLFWwindow* window, bool activePlayer)
 	glfwGetCursorPos(window, &x, &y);
 
 	static double lastX = x;
-
+	
 	if ((glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) || (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)) // Rotate to the right on pressing Left arrow or A
 		lastX = x + 5;
 	if ((glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) || (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)) // Rotate to the right on pressing right arrow or D
@@ -69,6 +70,15 @@ void Camera::update(GLFWwindow* window, bool activePlayer)
 
 
 	lastX = x;
+
+	//if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+	//	move(0, 0.05f);
+	//if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+	//	move(180, 0.05f);
+	//if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+	//	move(90, 0.05f);
+	//if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+	//	move(-90, 0.05f);
 }
 
 

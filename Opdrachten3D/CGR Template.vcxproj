@@ -174,10 +174,15 @@
     <ClInclude Include="ObjModel.h" />
     <ClInclude Include="RedBall.h" />
     <ClInclude Include="stb_image.h" />
+    <ClInclude Include="Table.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="tigl.h" />
     <ClInclude Include="WhiteBall.h" />
     <ClInclude Include="YellowBall.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Config.txt" />
+    <Text Include="Config\Config.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

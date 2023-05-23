@@ -11,12 +11,17 @@ class Ball
 public:
 	ObjModel* model;
 
-	Ball(std::string filePath);
+	Ball(std::string filePath, ObjModel* tableEdge);
 	void update(float deltaTime);
 	void draw();
 	void move(glm::vec2 direction, float speed);
 	glm::vec3 getPosition();
 	float getSpeed();
+	glm::vec2 getDirection();
+	void setSpeed(float speed);
+	void setDirection(glm::vec2 direction);
+	void setDirection(float direction);
+	void changeDirection(bool vertical, bool horizontal);
 
 protected:
 	std::string path;

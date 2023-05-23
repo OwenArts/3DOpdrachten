@@ -12,18 +12,19 @@
 #include "Ball.h"
 #include "Ceu.h"
 
-/* TODO:
+/* TODO (3D):
 *	Bal toevoegen (ball.cpp, white-, red-, yellowball.cpp)						DONE
 *	Bal logica (locatie, richting, snelheid (afnemend), botsing, etc)			DONE (richting, snelheid)
 *	Camera laten bewegen om juiste bal											DONE
-*	Afmetigen tafel
-*	Collision met randen tafel en andere ballen
-*	Stok toevoegen (ceu.cpp) (aanmaken in blender)
+*	Afmetigen tafel																DONE
+*	Collision met randen tafel													DONE 
+*	Collision met andere ballen									 
 *	Stok logica (afschieten, richting laten bepalen door gebruiker, etc)		DONE (afschieten muisklik, richting dmv a,d, pijlknoppen en muis)
-*	Belichting																	W.I.P.
+*	Belichting																	DONE
 *	mist/fog																	DONE
 *	Automatisch bewegend object (Keu of bal laten rollen)
 *	Speler object laten bedienen (zie `Stok logica`)							DONE
+*	Stok toevoegen (ceu.cpp) (aanmaken in blender)								DONE - REMOVED CAUSE BUGS, SHIFTED TO END OF PROJECT
 */
 
 using tigl::Vertex;
@@ -49,6 +50,8 @@ void update();
 void draw();
 void enableFog(bool flag);
 void enableLight(bool state);
+void CheckForCollisionBall(Ball& one, Ball& two);
+void CheckForCollisionTable(Ball& ball);
 
 int main(void)
 {
@@ -76,7 +79,6 @@ int main(void)
 
 	glfwTerminate();
 
-
 	return 0;
 }
 
@@ -92,6 +94,10 @@ void init()
 		});
 	glfwSetMouseButtonCallback(window, [](GLFWwindow* window, int button, int action, int mods)
 		{
+			if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS)
+			{
+				std::cout << camera->getPosition().x << ", " << camera->getPosition().z << std::endl;
+			}
 			if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS && !activePlayer)
 			{
 				if (whiteBall->getSpeed() < 0.05f)
@@ -107,9 +113,9 @@ void init()
 	biljartTable[0] = new ObjModel("models/biljard/Biljart_table.obj");
 	biljartTable[1] = new ObjModel("models/biljard/Biljart_edge.obj");
 	biljartTable[2] = new ObjModel("models/biljard/Biljart_cloth.obj");
-	whiteBall = new WhiteBall("models/ball/WhiteBall.obj");
-	redBall = new RedBall("models/ball/RedBall.obj");
-	yellowBall = new YellowBall("models/ball/YellowBall.obj");
+	whiteBall = new WhiteBall("models/ball/WhiteBall.obj", biljartTable[1]);
+	redBall = new RedBall("models/ball/RedBall.obj", biljartTable[1]);
+	yellowBall = new YellowBall("models/ball/YellowBall.obj", biljartTable[1]);
 	camera = new Camera(window, whiteBall, yellowBall);
 	ceu = new Ceu(*camera, "models/ceu/Ceu.obj");
 }
@@ -120,20 +126,20 @@ void update()
 	float deltaTime = lastFrameTime - frameTime;
 	lastFrameTime = frameTime;
 
-	if (!activePlayer && (whiteBall->getSpeed() <= 0.05f && whiteBall->getSpeed() > 0)) {
+	if (!activePlayer && (whiteBall->getSpeed() <= 0.05f && whiteBall->getSpeed() > 0)) 
 		activePlayer = !activePlayer;
-		std::cout<< "going to yellow" << std::endl;
-	}
-	if (activePlayer && (yellowBall->getSpeed() <= 0.05f && yellowBall->getSpeed() > 0)) {
+	if (activePlayer && (yellowBall->getSpeed() <= 0.05f && yellowBall->getSpeed() > 0))
 		activePlayer = !activePlayer;
-		std::cout << "going to white" << std::endl;
-	}
 
 	camera->update(window, activePlayer);
 	whiteBall->update(deltaTime);
 	yellowBall->update(deltaTime);
 	redBall->update(deltaTime);
 	ceu->update(deltaTime);
+
+	CheckForCollisionTable(*whiteBall);
+	CheckForCollisionTable(*yellowBall);
+	CheckForCollisionTable(*redBall);
 }
 
 void draw()
@@ -191,4 +197,38 @@ void enableLight(bool state)
 	else {
 		tigl::shader->enableLighting(false);
 	}
+}
+
+void CheckForCollisionBall(Ball& one, Ball& two)
+{
+	//std::cout <<  "ball1 x: " <<round(one.getPosition().x * 10.0) / 10.0<< ", z:" << round(one.getPosition().z * 10.0) / 10.0 << ", ball2 x: " << round(two.getPosition().x * 10.0) / 10.0 << ", z:" << round(two.getPosition().z * 10.0) / 10.0 << std::endl;
+	bool collisionX = round(one.getPosition().x * 10.0) / 10.0 >= round(two.getPosition().x * 10.0) / 10.0 && round(two.getPosition().x * 10.0) / 10.0 >= round(one.getPosition().x * 10.0) / 10.0;
+	bool collisionZ = round(one.getPosition().z * 10.0) / 10.0 >= round(two.getPosition().z * 10.0) / 10.0 && round(two.getPosition().z * 10.0) / 10.0 >= round(one.getPosition().z * 10.0) / 10.0;
+	//std::cout << "Collision on x-axis: " << collisionX << ", collision on z-axis: " << collisionZ << std::endl;
+	//return collisionX && collisionZ;
+}
+
+void CheckForCollisionTable(Ball& ball)
+{
+	/*
+	*  ORGINEEL - COORDS HOEKEN TAFEL
+	*	X = -1.8063,	Z = -2.76143 	-	RECHTS ONDER (VANAF STARTPUNT)
+	*	X = -1.81101,	Z =  2.78461	-	RECHTS BOVEN (VANAF STARTPUNT)
+	*	X = 1.80754,	Z =  2.73023	-	LINKS BOVEN (VANAF STARTPUNT)
+	*	X = 1.81428,	Z = -2.81266	-	lINKS ONDER (VANAF STARTPUNT)
+	* 
+	*  AFGEROND - COORDS HOEKEN TAFEL
+	*	X = -1.81,	Z = -2.80 	-	RECHTS ONDER (VANAF STARTPUNT)
+	*	X = -1.81,	Z =  2.80	-	RECHTS BOVEN (VANAF STARTPUNT)
+	*	X =  1.81,	Z =  2.80	-	LINKS BOVEN (VANAF STARTPUNT)
+	*	X =  1.81,	Z = -2.80	-	lINKS ONDER (VANAF STARTPUNT)
+	*/
+	float leftWall = 1.81f;
+	float rightWall = -1.81f;
+	float upperWall = 2.80f;
+	float lowerWall = -2.80f;
+	glm::vec3 coords = ball.getPosition();
+	
+	if (coords.x >= leftWall || coords.x <= rightWall) ball.changeDirection(false, true);
+	if (coords.z >= upperWall || coords.z <= lowerWall) ball.changeDirection(true, false);
 }

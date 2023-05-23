@@ -5,6 +5,5 @@
 class RedBall : public Ball
 {
 public:
-
-	RedBall(std::string filePath);
+	RedBall(std::string filePath, ObjModel* tableEdge);
 };
