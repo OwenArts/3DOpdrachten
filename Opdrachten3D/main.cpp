@@ -15,6 +15,7 @@
 /* TODO (3D):
 *	Bal toevoegen (ball.cpp, white-, red-, yellowball.cpp)						DONE
 *	Bal logica (locatie, richting, snelheid (afnemend), botsing, etc)			DONE (richting, snelheid)
+*	3 Cushion Billiard logica toevoegen
 *	Camera laten bewegen om juiste bal											DONE
 *	Afmetigen tafel																DONE
 *	Collision met randen tafel													DONE
@@ -23,6 +24,7 @@
 *	Belichting																	DONE
 *	mist/fog																	DONE
 *	Automatisch bewegend object (Keu of bal laten rollen)
+*	Alpha blending (cue transparant maken)
 *	Speler object laten bedienen (zie `Stok logica`)							DONE
 *	Stok toevoegen (ceu.cpp) (aanmaken in blender)								w.i.p. - REMOVED CAUSE BUGS, SHIFTED TO END OF PROJECT
 *	Particle toevoegen onder ballen
