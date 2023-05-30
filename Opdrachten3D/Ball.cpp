@@ -15,7 +15,8 @@ void Ball::move(float direction, float speed)
 void Ball::move(glm::vec2 direction, float speed)
 {
 	std::cout << tag << " got moved in the following direction [" << direction.x << "," << direction.y << "] with a speed of " << speed << std::endl;
-	this->direction = direction;
+	this->lookDirection = direction;
+	this->moveDirection = direction;
 	this->speed = speed;
 }
 
@@ -23,8 +24,8 @@ void Ball::draw()
 {
 	glm::mat4 modelMatrix(1.0f);
 	modelMatrix = glm::translate(modelMatrix, position);
-	modelMatrix = glm::rotate(modelMatrix, direction.x, glm::vec3(1, 0, 0));
-	modelMatrix = glm::rotate(modelMatrix, direction.y, glm::vec3(0, 1, 0));
+	modelMatrix = glm::rotate(modelMatrix, lookDirection.x, glm::vec3(1, 0, 0));
+	modelMatrix = glm::rotate(modelMatrix, lookDirection.y, glm::vec3(0, 1, 0));
 
 	tigl::shader->setModelMatrix(modelMatrix);
 	model->draw();
@@ -41,10 +42,10 @@ void Ball::update(float deltaTime)
 	prevPosition = position;
 	if (speed > 0.05f)
 	{
-		//direction.x -= 0.4f;									//Too buggy, rotates in front of the obj model instead of own center.
 		// 0f (0°) <= y <= 6.3f (360°)
-		position.x += (direction.x * speed * deltaTime);
-		position.z += (direction.y * speed * deltaTime);
+		position.x += (moveDirection.x * speed * deltaTime);
+		position.z += (moveDirection.y * speed * deltaTime);
+		lookDirection.x -= 0.4f;
 		speed -= 0.005f;
 	}
 	else
@@ -61,7 +62,7 @@ float Ball::getSpeed()
 
 glm::vec2 Ball::getDirection()
 {
-	return direction;
+	return moveDirection;
 }
 
 void Ball::setSpeed(float speed)
@@ -71,22 +72,21 @@ void Ball::setSpeed(float speed)
 
 void Ball::setDirection(float direction)
 {
-	this->direction.x = -sin(direction);
-	this->direction.y = cos(direction);
+	this->moveDirection.x = -sin(direction);
+	this->moveDirection.y = cos(direction);
 }
 
 void Ball::setDirection(glm::vec2 direction)
 {
-	this->direction = direction;
+	this->moveDirection = direction;
 }
 
 void Ball::changeDirection(bool vertical, bool horizontal)
 {
 	if (vertical)
-		direction.y = -direction.y;
+		moveDirection.y = -moveDirection.y;
 	if (horizontal)
-		direction.x = -direction.x;
-	//setPosition(prevPosition);
+		moveDirection.x = -moveDirection.x;
 }
 
 void Ball::setPosition(glm::vec3 position) {

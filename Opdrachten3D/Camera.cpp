@@ -5,8 +5,8 @@
 
 Camera::Camera(GLFWwindow* window, Ball& ball1, Ball& ball2)
 {
-	playerOne = ball1;
-	playerTwo = ball2;
+	playerOne = &ball1;
+	playerTwo = &ball2;
 
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	if (glfwRawMouseMotionSupported())

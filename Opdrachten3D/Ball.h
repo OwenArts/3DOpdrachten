@@ -39,5 +39,6 @@ protected:
 	std::string path;
 	float speed;
 	glm::vec3 position = glm::vec3(0, 2.f, 0);
-	glm::vec2 direction = glm::vec2(0, 0);
+	glm::vec2 moveDirection = glm::vec2(0, 0);
+	glm::vec2 lookDirection = glm::vec2(0, 0);
 };

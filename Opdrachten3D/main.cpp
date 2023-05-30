@@ -12,7 +12,7 @@
 #include "Ball.h"
 #include "Ceu.h"
 
-/* TODO (3D):
+/* TODO :
 *	Bal toevoegen (ball.cpp, white-, red-, yellowball.cpp)						DONE
 *	Bal logica (locatie, richting, snelheid (afnemend), botsing, etc)			DONE (richting, snelheid)
 *	3 Cushion Billiard logica toevoegen
@@ -27,7 +27,11 @@
 *	Alpha blending (cue transparant maken)
 *	Speler object laten bedienen (zie `Stok logica`)							DONE
 *	Stok toevoegen (ceu.cpp) (aanmaken in blender)								w.i.p. - REMOVED CAUSE BUGS, SHIFTED TO END OF PROJECT
-*	Particle toevoegen onder ballen
+*	Particle toevoegen onder ballen												w.i.p.
+*	kleur van de mist aanpassen naar kleur achtergrond.							w.i.p.
+*	test of pointers bij camera constructor werkt
+*	de ballen opdelen in aparte threads
+*	actieve speler schrijven en lezen vanuit een bestand
 */
 
 using tigl::Vertex;
@@ -47,6 +51,7 @@ RedBall* redBall;
 YellowBall* yellowBall;
 bool activePlayer = false;	//false on whiteball, true on yellowball
 double lastFrameTime = 0;
+glm::vec3 worldColor = glm::vec3(0.3f, 0.4f, 0.6f);
 
 void init();
 void update();
@@ -68,8 +73,6 @@ int main(void)
 	}
 	glfwMakeContextCurrent(window);
 
-	tigl::init();
-
 	init();
 
 	while (!glfwWindowShouldClose(window))
@@ -88,6 +91,10 @@ int main(void)
 
 void init()
 {
+	tigl::init();
+	enableFog(true);
+	enableLight(true);
+
 	int value[10];
 	glGetIntegerv(GL_MAX_TEXTURE_SIZE, value);
 	glfwSetKeyCallback(window, [](GLFWwindow* window, int key, int scancode, int action, int mods)
@@ -116,7 +123,7 @@ void init()
 	whiteBall = new WhiteBall("models/ball/WhiteBall.obj", "WhiteBall");
 	redBall = new RedBall("models/ball/RedBall.obj", "RedBall");
 	yellowBall = new YellowBall("models/ball/YellowBall.obj", "YellowBall");
-	camera = new Camera(window, *whiteBall, *yellowBall);
+	camera = new Camera(window, *whiteBall, *yellowBall); //TEST - SEE IF THIS WORKS 
 	ceu = new Ceu(*camera, "models/ceu/Ceu.obj");
 }
 
@@ -147,7 +154,7 @@ void update()
 
 void draw()
 {
-	glClearColor(0.3f, 0.4f, 0.6f, 1.0f);
+	glClearColor(worldColor.x, worldColor.y, worldColor.z, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	int viewport[4];
@@ -161,8 +168,6 @@ void draw()
 	tigl::shader->enableColor(true);
 
 	glEnable(GL_DEPTH_TEST);
-	enableFog(true);
-	enableLight(true);
 
 
 	for (auto& model : biljartTable)
@@ -178,6 +183,7 @@ void enableFog(bool state)
 	if (state) {
 		tigl::shader->enableFog(true);
 		tigl::shader->setFogLinear(1, 4);
+		tigl::shader->setFogColor(worldColor);
 		tigl::shader->setFogExp(.15f);
 	}
 	else {
