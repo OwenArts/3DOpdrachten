@@ -20,21 +20,21 @@ private:
 public:
 	ObjModel* model;
 	std::string tag;
+	glm::vec3 getPosition();
+	glm::vec2 getDirection();
+	float getSpeed();
 
 	Ball(std::string filePath, std::string tag);
 	void update(float deltaTime);
 	void draw();
 	void move(float direction, float speed);
 	void move(glm::vec2 direction, float speed);
-	glm::vec3 getPosition();
-	float getSpeed();
-	glm::vec2 getDirection();
 	void setSpeed(float speed);
 	void setDirection(glm::vec2 direction);
 	void setPosition(glm::vec3 position);
 	void setDirection(float direction);
 	void changeDirection(bool vertical, bool horizontal);
-
+	
 protected:
 	std::string path;
 	float speed;

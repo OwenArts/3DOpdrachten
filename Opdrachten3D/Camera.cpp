@@ -3,7 +3,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
 
-Camera::Camera(GLFWwindow* window, Ball* ball1, Ball* ball2)
+Camera::Camera(GLFWwindow* window, Ball& ball1, Ball& ball2)
 {
 	playerOne = ball1;
 	playerTwo = ball2;

@@ -116,7 +116,7 @@ void init()
 	whiteBall = new WhiteBall("models/ball/WhiteBall.obj", "WhiteBall");
 	redBall = new RedBall("models/ball/RedBall.obj", "RedBall");
 	yellowBall = new YellowBall("models/ball/YellowBall.obj", "YellowBall");
-	camera = new Camera(window, whiteBall, yellowBall);
+	camera = new Camera(window, *whiteBall, *yellowBall);
 	ceu = new Ceu(*camera, "models/ceu/Ceu.obj");
 }
 

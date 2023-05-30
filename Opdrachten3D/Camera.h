@@ -7,7 +7,7 @@ struct GLFWwindow;
 class Camera
 {
 public:
-	Camera(GLFWwindow*, Ball* ball1, Ball* ball2);
+	Camera(GLFWwindow*, Ball& ball1, Ball& ball2);
 
 	glm::mat4 getMatrix();
 	void update(GLFWwindow*, bool activePlayer);
