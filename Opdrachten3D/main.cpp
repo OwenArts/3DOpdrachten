@@ -15,7 +15,7 @@
 /* TODO :
 *	Bal toevoegen (ball.cpp, white-, red-, yellowball.cpp)						DONE
 *	Bal logica (locatie, richting, snelheid (afnemend), botsing, etc)			DONE (richting, snelheid)
-*	3 Cushion Billiard logica toevoegen
+*	3 Cushion Billiard logica game toevoegen
 *	Camera laten bewegen om juiste bal											DONE
 *	Afmetigen tafel																DONE
 *	Collision met randen tafel													DONE
@@ -23,13 +23,13 @@
 *	Stok logica (afschieten, richting laten bepalen door gebruiker, etc)		DONE (afschieten muisklik, richting dmv a,d, pijlknoppen en muis)
 *	Belichting																	DONE
 *	mist/fog																	DONE
-*	Automatisch bewegend object (Keu of bal laten rollen)
-*	Alpha blending (cue transparant maken)
+*	Automatisch bewegend object (Keu of bal laten rollen)						w.i.p.
+*	Alpha blending (cue transparant maken)										BACKLOG
 *	Speler object laten bedienen (zie `Stok logica`)							DONE
-*	Stok toevoegen (ceu.cpp) (aanmaken in blender)								w.i.p. - REMOVED CAUSE BUGS, SHIFTED TO END OF PROJECT
-*	Particle toevoegen onder ballen												w.i.p.
-*	kleur van de mist aanpassen naar kleur achtergrond.							w.i.p.
-*	test of pointers bij camera constructor werkt
+*	Stok toevoegen (ceu.cpp) (aanmaken in blender)								BACKLOG - END OF PROJECT
+*	Particle toevoegen onder ballen												
+*	kleur van de mist aanpassen naar kleur achtergrond.							DONE
+*	test of pointers bij camera constructor werkt								DONE
 *	de ballen opdelen in aparte threads
 *	actieve speler schrijven en lezen vanuit een bestand
 */
