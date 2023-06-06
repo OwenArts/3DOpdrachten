@@ -3,7 +3,7 @@
 Particle::Particle(float xPos, float yPos) {
 	position.x = xPos + static_cast<float>(rand() % 100 - 50) / 500.0f;
 	position.z = yPos + static_cast<float>(rand() % 100 - 50) / 500.0f;
-	position.y = .1f;
+	position.y = 0.1f;
 
 	velocity.x = static_cast<float>(rand() % 100 - 50) / 500.0f; // Random initial velocity
 	velocity.y = static_cast<float>(rand() % 100 - 50) / 500.0f;

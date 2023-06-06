@@ -12,6 +12,7 @@
 #include "Ball.h"
 #include "Ceu.h"
 #include "ParticleSystem.h"
+#include "FileManager.h"
 
 /* TODO :
 *	Bal toevoegen (ball.cpp, white-, red-, yellowball.cpp)						DONE
@@ -28,13 +29,13 @@
 *	Alpha blending (cue transparant maken)										BACKLOG
 *	Speler object laten bedienen (zie `Stok logica`)							DONE
 *	Stok toevoegen (ceu.cpp) (aanmaken in blender)								BACKLOG
-*	Particle toevoegen onder ballen												BACKLOG
+*	Particle toevoegen onder ballen												DONE - redball collision buggy
 *	kleur van de mist aanpassen naar kleur achtergrond.							DONE
 *	test of pointers bij camera constructor werkt								DONE
-*	ballen opdelen in aparte threads	
-*	actieve speler schrijven en lezen vanuit een bestand (fileIO)				w.i.p.
+*	ballen opdelen in aparte threads
+*	actieve speler schrijven en lezen vanuit een bestand (fileIO)				DONE
 *	overerving + virtual functie												DONE
-*	deconstructors
+*	deconstructors																? - Hoe in te vullen
 *	1 unit test
 *	standaard datastructuren													?
 *	rekening houden met memory leaks
@@ -58,11 +59,12 @@ float rotation = 0;
 WhiteBall* whiteBall;
 RedBall* redBall;
 YellowBall* yellowBall;
-ParticleSystem* particleSystemWhiteBall,* particleSystemYellowBall,* particleSystemRedBall;
+ParticleSystem* particleSystemWhiteBall, * particleSystemYellowBall, * particleSystemRedBall;
 bool activePlayer = false;	//false on whiteball, true on yellowball
 double lastFrameTime = 0;
 glm::vec3 worldColor = glm::vec3(0.3f, 0.4f, 0.6f);
 std::string savePath = "GameData";
+FileManager* fileManager;
 
 
 void init();
@@ -104,7 +106,9 @@ int main(void)
 void init()
 {
 	tigl::init();
-
+	fileManager = new FileManager("config.txt");
+	activePlayer = fileManager->readActivePlayer();
+	
 	enableFog(true);
 	enableLight(true);
 
@@ -148,30 +152,33 @@ void update()
 	double frameTime = glfwGetTime();
 	float deltaTime = lastFrameTime - frameTime;
 	lastFrameTime = frameTime;
-	
+
 
 	if (!activePlayer && (whiteBall->getSpeed() <= 0.05f && whiteBall->getSpeed() > 0))
+	{
 		activePlayer = !activePlayer;
+		fileManager->writeActivePlayer(activePlayer);
+	}
 	if (activePlayer && (yellowBall->getSpeed() <= 0.05f && yellowBall->getSpeed() > 0))
+	{
 		activePlayer = !activePlayer;
+		fileManager->writeActivePlayer(activePlayer);
+	}
 
 	camera->update(window, activePlayer);
 	whiteBall->update(deltaTime);
+	particleSystemWhiteBall->updateParticles(deltaTime);
 	yellowBall->update(deltaTime);
+	particleSystemYellowBall->updateParticles(deltaTime);
 	redBall->update(deltaTime);
-	//ceu->update(deltaTime);
+	particleSystemRedBall->updateParticles(deltaTime);
 
 	CheckForCollisionTable(*whiteBall);
 	CheckForCollisionTable(*yellowBall);
 	CheckForCollisionTable(*redBall);
 	CheckForCollisionBall(*whiteBall, *yellowBall);
-	CheckForCollisionBall(*whiteBall, *redBall);
 	CheckForCollisionBall(*yellowBall, *redBall);
-
-	// Update particles
-	particleSystemWhiteBall->updateParticles(deltaTime);
-	particleSystemYellowBall->updateParticles(deltaTime);
-	particleSystemRedBall->updateParticles(deltaTime);
+	CheckForCollisionBall(*redBall, *whiteBall);
 }
 
 void draw()

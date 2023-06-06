@@ -158,6 +158,7 @@
   <ItemGroup>
     <ClCompile Include="Ceu.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="FileManager.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="ObjModel.cpp" />
     <ClCompile Include="Ball.cpp" />
@@ -173,6 +174,7 @@
     <ClInclude Include="Ball.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Ceu.h" />
+    <ClInclude Include="FileManager.h" />
     <ClInclude Include="ObjModel.h" />
     <ClInclude Include="Particle.h" />
     <ClInclude Include="ParticleSystem.h" />
