@@ -10,12 +10,13 @@ Ball::Ball(std::string filePath, std::string tag)
 void Ball::move(float direction, float speed)
 {
 	move(glm::vec2(-sin(direction), cos(direction)), speed);
+	lookDirection.y = direction;
+	std::cout << "recieved direction: " << direction << ", calculated y moveDirection: " << moveDirection.y << ", calculated back: " << std::acosf (moveDirection.y) << std::endl;
 }
 
 void Ball::move(glm::vec2 direction, float speed)
 {
 	std::cout << tag << " got moved in the following direction [" << direction.x << "," << direction.y << "] with a speed of " << speed << std::endl;
-	this->lookDirection = direction;
 	this->moveDirection = direction;
 	this->speed = speed;
 }
@@ -23,6 +24,7 @@ void Ball::move(glm::vec2 direction, float speed)
 void Ball::draw()
 {
 	glm::mat4 modelMatrix(1.0f);
+	glTranslatef(0.0f, 0.25f, -0.25f);
 	modelMatrix = glm::translate(modelMatrix, position);
 	modelMatrix = glm::rotate(modelMatrix, lookDirection.x, glm::vec3(1, 0, 0));
 	modelMatrix = glm::rotate(modelMatrix, lookDirection.y, glm::vec3(0, 1, 0));
@@ -30,12 +32,6 @@ void Ball::draw()
 	tigl::shader->setModelMatrix(modelMatrix);
 	model->draw();
 }
-
-glm::vec3 Ball::getPosition()
-{
-	return position;
-}
-
 
 void Ball::update(float deltaTime)
 {
@@ -45,7 +41,8 @@ void Ball::update(float deltaTime)
 		// 0f (0°) <= y <= 6.3f (360°)
 		position.x += (moveDirection.x * speed * deltaTime);
 		position.z += (moveDirection.y * speed * deltaTime);
-		lookDirection.x -= 0.4f;
+		lookDirection.y -= 0.025f * speed;
+
 		speed -= 0.005f;
 	}
 	else
@@ -60,7 +57,7 @@ float Ball::getSpeed()
 	return speed;
 }
 
-glm::vec2 Ball::getDirection()
+glm::vec2 Ball::getMoveDirection()
 {
 	return moveDirection;
 }
@@ -70,13 +67,13 @@ void Ball::setSpeed(float speed)
 	this->speed = speed;
 }
 
-void Ball::setDirection(float direction)
+void Ball::setMoveDirection(float direction)
 {
 	this->moveDirection.x = -sin(direction);
 	this->moveDirection.y = cos(direction);
 }
 
-void Ball::setDirection(glm::vec2 direction)
+void Ball::setMoveDirection(glm::vec2 direction)
 {
 	this->moveDirection = direction;
 }

@@ -11,6 +11,7 @@
 #include "RedBall.h"
 #include "Ball.h"
 #include "Ceu.h"
+#include "ParticleSystem.h"
 
 /* TODO :
 *	Bal toevoegen (ball.cpp, white-, red-, yellowball.cpp)						DONE
@@ -19,19 +20,27 @@
 *	Camera laten bewegen om juiste bal											DONE
 *	Afmetigen tafel																DONE
 *	Collision met randen tafel													DONE
-*	Collision met andere ballen													DONE - still buggy
-*	Stok logica (afschieten, richting laten bepalen door gebruiker, etc)		DONE (afschieten muisklik, richting dmv a,d, pijlknoppen en muis)
+*	Collision met andere ballen													DONE - beetje buggy
+*	Stok logica (afschieten, richting laten bepalen door gebruiker, etc)		DONE - afschieten muisklik, richting dmv a,d, pijlknoppen en muis
 *	Belichting																	DONE
 *	mist/fog																	DONE
-*	Automatisch bewegend object (Keu of bal laten rollen)						w.i.p.
+*	Automatisch bewegend object (Keu of bal laten rollen)						DONE - bal over y as laten bewegen
 *	Alpha blending (cue transparant maken)										BACKLOG
 *	Speler object laten bedienen (zie `Stok logica`)							DONE
-*	Stok toevoegen (ceu.cpp) (aanmaken in blender)								BACKLOG - END OF PROJECT
-*	Particle toevoegen onder ballen												
+*	Stok toevoegen (ceu.cpp) (aanmaken in blender)								BACKLOG
+*	Particle toevoegen onder ballen												BACKLOG
 *	kleur van de mist aanpassen naar kleur achtergrond.							DONE
 *	test of pointers bij camera constructor werkt								DONE
-*	de ballen opdelen in aparte threads
-*	actieve speler schrijven en lezen vanuit een bestand
+*	ballen opdelen in aparte threads	
+*	actieve speler schrijven en lezen vanuit een bestand (fileIO)				w.i.p.
+*	overerving + virtual functie												DONE
+*	deconstructors
+*	1 unit test
+*	standaard datastructuren													?
+*	rekening houden met memory leaks
+*	afhandeling van exeptions
+*	documentatie toevoegen
+*	GPU gebruiken ipv CPU
 */
 
 using tigl::Vertex;
@@ -44,14 +53,17 @@ GLFWwindow* window;
 
 ObjModel* biljartTable[3];
 Camera* camera;
-Ceu* ceu;
+//Ceu* ceu;
 float rotation = 0;
 WhiteBall* whiteBall;
 RedBall* redBall;
 YellowBall* yellowBall;
+ParticleSystem* particleSystemWhiteBall,* particleSystemYellowBall,* particleSystemRedBall;
 bool activePlayer = false;	//false on whiteball, true on yellowball
 double lastFrameTime = 0;
 glm::vec3 worldColor = glm::vec3(0.3f, 0.4f, 0.6f);
+std::string savePath = "GameData";
+
 
 void init();
 void update();
@@ -65,7 +77,7 @@ int main(void)
 {
 	if (!glfwInit())
 		throw "Could not initialize glwf";
-	window = glfwCreateWindow(1400, 800, "Three cushion billiard", NULL, NULL);
+	window = glfwCreateWindow(1680, 960, "Three cushion billiard", NULL, NULL);
 	if (!window)
 	{
 		glfwTerminate();
@@ -92,6 +104,7 @@ int main(void)
 void init()
 {
 	tigl::init();
+
 	enableFog(true);
 	enableLight(true);
 
@@ -123,8 +136,11 @@ void init()
 	whiteBall = new WhiteBall("models/ball/WhiteBall.obj", "WhiteBall");
 	redBall = new RedBall("models/ball/RedBall.obj", "RedBall");
 	yellowBall = new YellowBall("models/ball/YellowBall.obj", "YellowBall");
-	camera = new Camera(window, *whiteBall, *yellowBall); //TEST - SEE IF THIS WORKS 
-	ceu = new Ceu(*camera, "models/ceu/Ceu.obj");
+	camera = new Camera(window, *whiteBall, *yellowBall);
+	//ceu = new Ceu(*camera, "models/ceu/Ceu.obj");
+	particleSystemWhiteBall = new ParticleSystem(50, *whiteBall);
+	particleSystemYellowBall = new ParticleSystem(100, *yellowBall);
+	particleSystemRedBall = new ParticleSystem(100, *redBall);
 }
 
 void update()
@@ -132,6 +148,7 @@ void update()
 	double frameTime = glfwGetTime();
 	float deltaTime = lastFrameTime - frameTime;
 	lastFrameTime = frameTime;
+	
 
 	if (!activePlayer && (whiteBall->getSpeed() <= 0.05f && whiteBall->getSpeed() > 0))
 		activePlayer = !activePlayer;
@@ -142,7 +159,7 @@ void update()
 	whiteBall->update(deltaTime);
 	yellowBall->update(deltaTime);
 	redBall->update(deltaTime);
-	ceu->update(deltaTime);
+	//ceu->update(deltaTime);
 
 	CheckForCollisionTable(*whiteBall);
 	CheckForCollisionTable(*yellowBall);
@@ -150,6 +167,11 @@ void update()
 	CheckForCollisionBall(*whiteBall, *yellowBall);
 	CheckForCollisionBall(*whiteBall, *redBall);
 	CheckForCollisionBall(*yellowBall, *redBall);
+
+	// Update particles
+	particleSystemWhiteBall->updateParticles(deltaTime);
+	particleSystemYellowBall->updateParticles(deltaTime);
+	particleSystemRedBall->updateParticles(deltaTime);
 }
 
 void draw()
@@ -172,10 +194,16 @@ void draw()
 
 	for (auto& model : biljartTable)
 		model->draw();
+
 	whiteBall->draw();
 	yellowBall->draw();
 	redBall->draw();
 	//ceu->draw();
+
+	// Render particles
+	particleSystemWhiteBall->renderParticles();
+	particleSystemYellowBall->renderParticles();
+	particleSystemRedBall->renderParticles();
 }
 
 void enableFog(bool state)
@@ -226,16 +254,16 @@ void CheckForCollisionBall(Ball& one, Ball& two)
 	//	std::cout << "--------------------------------------------------------------------------" << std::endl;
 	//}
 
-	if ((round(one.getPosition().x * 10.f) / 10.f < round(two.getPosition().x * 10.f) / 10.f + radius &&
-		round(one.getPosition().x * 10.f) / 10.f > round(two.getPosition().x * 10.f) / 10.f - radius) ||
-		round(one.getPosition().x * 10.f) / 10.f == round(two.getPosition().x * 10.f) / 10.f)
+	if ((round(one.position.x * 10.f) / 10.f < round(two.position.x * 10.f) / 10.f + radius &&
+		round(one.position.x * 10.f) / 10.f > round(two.position.x * 10.f) / 10.f - radius) ||
+		round(one.position.x * 10.f) / 10.f == round(two.position.x * 10.f) / 10.f)
 	{
 		collisionX = true;
 	}
 
-	if ((round(one.getPosition().z * 10.f) / 10.f < round(two.getPosition().z * 10.f) / 10.f + radius &&
-		round(one.getPosition().z * 10.f) / 10.f > round(two.getPosition().z * 10.f) / 10.f - radius) ||
-		round(one.getPosition().z * 10.f) / 10.f == round(two.getPosition().z * 10.f) / 10.f)
+	if ((round(one.position.z * 10.f) / 10.f < round(two.position.z * 10.f) / 10.f + radius &&
+		round(one.position.z * 10.f) / 10.f > round(two.position.z * 10.f) / 10.f - radius) ||
+		round(one.position.z * 10.f) / 10.f == round(two.position.z * 10.f) / 10.f)
 	{
 		collisionZ = true;
 	}
@@ -243,24 +271,23 @@ void CheckForCollisionBall(Ball& one, Ball& two)
 	{
 		if (one.getSpeed() > two.getSpeed())
 		{
-			glm::vec2 direction = one.getDirection();
-			two.move(direction, one.getSpeed() - 0.5f);
-			one.setSpeed(one.getSpeed() - 0.5);
+			glm::vec2 direction = one.getMoveDirection();
+			if (one.getSpeed() > 1.f)
+				two.move(direction, one.getSpeed() - 0.5f);
 			if (direction.x > direction.y)
 				one.changeDirection(false, true);
 			if (direction.x < direction.y)
 				one.changeDirection(true, false);
-
 		}
 		else if (one.getSpeed() < two.getSpeed())
 		{
-			glm::vec2 direction = two.getDirection();
-			one.move(direction, two.getSpeed() - 0.5f);
+			glm::vec2 direction = two.getMoveDirection();
+			if (two.getSpeed() > 1.f)
+				one.move(direction, two.getSpeed() - 0.5f);
 			if (direction.x > direction.y)
 				one.changeDirection(false, true);
 			if (direction.x < direction.y)
 				one.changeDirection(true, false);
-
 		}
 	}
 }
@@ -284,7 +311,7 @@ void CheckForCollisionTable(Ball& ball)
 	float rightWall = -1.81f;
 	float upperWall = 2.80f;
 	float lowerWall = -2.80f;
-	glm::vec3 coords = ball.getPosition();
+	glm::vec3 coords = ball.position;
 
 	if (coords.x >= leftWall || coords.x <= rightWall) ball.changeDirection(false, true);
 	if (coords.z >= upperWall || coords.z <= lowerWall) ball.changeDirection(true, false);

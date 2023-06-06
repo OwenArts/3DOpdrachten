@@ -161,6 +161,8 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="ObjModel.cpp" />
     <ClCompile Include="Ball.cpp" />
+    <ClCompile Include="Particle.cpp" />
+    <ClCompile Include="ParticleSystem.cpp" />
     <ClCompile Include="RedBall.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="tigl.cpp" />
@@ -173,6 +175,7 @@
     <ClInclude Include="Ceu.h" />
     <ClInclude Include="ObjModel.h" />
     <ClInclude Include="Particle.h" />
+    <ClInclude Include="ParticleSystem.h" />
     <ClInclude Include="RedBall.h" />
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="Texture.h" />
