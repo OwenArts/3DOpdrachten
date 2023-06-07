@@ -22,6 +22,7 @@ public:
 	float getSpeed();
 
 	Ball(std::string filePath, std::string tag);
+	~Ball();
 	virtual void update(float deltaTime);
 	void draw();
 	void move(float direction, float speed);

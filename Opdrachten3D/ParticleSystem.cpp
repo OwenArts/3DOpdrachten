@@ -5,6 +5,10 @@ ParticleSystem::ParticleSystem(int numParticles, Ball& ball) : numParticles(numP
 	this->ball = &ball;
 }
 
+ParticleSystem::~ParticleSystem() {
+
+}
+
 void ParticleSystem::updateParticles(float dt) {
 	// Update all particles
 	for (auto& particle : particles) {

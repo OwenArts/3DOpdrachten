@@ -51,10 +51,8 @@ using tigl::Vertex;
 #pragma comment(lib, "opengl32.lib")
 
 GLFWwindow* window;
-
 ObjModel* biljartTable[3];
 Camera* camera;
-//Ceu* ceu;
 float rotation = 0;
 WhiteBall* whiteBall;
 RedBall* redBall;
@@ -141,7 +139,6 @@ void init()
 	redBall = new RedBall("models/ball/RedBall.obj", "RedBall");
 	yellowBall = new YellowBall("models/ball/YellowBall.obj", "YellowBall");
 	camera = new Camera(window, *whiteBall, *yellowBall);
-	//ceu = new Ceu(*camera, "models/ceu/Ceu.obj");
 	particleSystemWhiteBall = new ParticleSystem(50, *whiteBall);
 	particleSystemYellowBall = new ParticleSystem(100, *yellowBall);
 	particleSystemRedBall = new ParticleSystem(100, *redBall);

@@ -7,6 +7,10 @@ Ball::Ball(std::string filePath, std::string tag)
 	this->tag = tag;
 }
 
+Ball::~Ball() {
+	delete model;
+}
+
 void Ball::move(float direction, float speed)
 {
 	move(glm::vec2(-sin(direction), cos(direction)), speed);

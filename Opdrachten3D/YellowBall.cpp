@@ -4,3 +4,6 @@ YellowBall::YellowBall(std::string filePath, std::string tag) : Ball(filePath, t
 	cushions_touched = 0;
 	position += glm::vec3(-1, 0, 2);
 }
+
+YellowBall::~YellowBall() {
+}

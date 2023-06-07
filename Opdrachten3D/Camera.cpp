@@ -13,6 +13,11 @@ Camera::Camera(GLFWwindow* window, Ball& ball1, Ball& ball2)
 		glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
 }
 
+Camera::~Camera() {
+	delete playerOne;
+	delete playerTwo;
+}
+
 glm::mat4 Camera::getMatrix()
 {
 	glm::mat4 ret(1.0f);

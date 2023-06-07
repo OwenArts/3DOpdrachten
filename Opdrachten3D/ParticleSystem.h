@@ -15,6 +15,7 @@ private:
 
 public:
     ParticleSystem(int numParticles, Ball& ball);
+    ~ParticleSystem();
 
     void updateParticles(float dt);
     void updateTrail(float xPos, float zPos);

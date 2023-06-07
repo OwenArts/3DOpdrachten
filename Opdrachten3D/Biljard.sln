@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.33627.172
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Biljart", "CGR Template.vcxproj", "{A7ECF1BE-DB22-4BF7-BFF6-E3BF72691EE6}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Biljard", "CGR Template.vcxproj", "{A7ECF1BE-DB22-4BF7-BFF6-E3BF72691EE6}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BiljardTest", "..\BiljardTest\BiljardTest.vcxproj", "{3852D494-C47C-489D-87E5-D939F4FDE2CF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,14 @@ Global
 		{A7ECF1BE-DB22-4BF7-BFF6-E3BF72691EE6}.Release|x64.Build.0 = Release|x64
 		{A7ECF1BE-DB22-4BF7-BFF6-E3BF72691EE6}.Release|x86.ActiveCfg = Release|Win32
 		{A7ECF1BE-DB22-4BF7-BFF6-E3BF72691EE6}.Release|x86.Build.0 = Release|Win32
+		{3852D494-C47C-489D-87E5-D939F4FDE2CF}.Debug|x64.ActiveCfg = Debug|x64
+		{3852D494-C47C-489D-87E5-D939F4FDE2CF}.Debug|x64.Build.0 = Debug|x64
+		{3852D494-C47C-489D-87E5-D939F4FDE2CF}.Debug|x86.ActiveCfg = Debug|Win32
+		{3852D494-C47C-489D-87E5-D939F4FDE2CF}.Debug|x86.Build.0 = Debug|Win32
+		{3852D494-C47C-489D-87E5-D939F4FDE2CF}.Release|x64.ActiveCfg = Release|x64
+		{3852D494-C47C-489D-87E5-D939F4FDE2CF}.Release|x64.Build.0 = Release|x64
+		{3852D494-C47C-489D-87E5-D939F4FDE2CF}.Release|x86.ActiveCfg = Release|Win32
+		{3852D494-C47C-489D-87E5-D939F4FDE2CF}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

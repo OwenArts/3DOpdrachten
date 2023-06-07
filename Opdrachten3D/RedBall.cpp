@@ -2,6 +2,8 @@
 
 RedBall::RedBall(std::string filePath, std::string tag) : Ball(filePath, tag) {
 }
+RedBall::~RedBall() {
+}
 
 void RedBall::update(float deltaTime) {
 	prevPosition = position;

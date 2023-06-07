@@ -8,4 +8,5 @@ private:
 	int cushions_touched;
 public:
 	WhiteBall(std::string filePath, std::string tag);
+	~WhiteBall();
 };

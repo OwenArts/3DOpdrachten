@@ -14,10 +14,15 @@ FileManager::FileManager(std::string fileName) {
 	}
 }
 
+FileManager::~FileManager() {
+
+}
+
 bool FileManager::readActivePlayer() {
 	std::ifstream file;
 	bool activePlayer;
-	file.open(path);
+	if (!file.is_open())
+		file.open(path);
 	file >> activePlayer;
 	file.close();
 	return activePlayer;
@@ -25,7 +30,8 @@ bool FileManager::readActivePlayer() {
 
 void FileManager::writeActivePlayer(bool activePlayer) {
 	std::ofstream file;
-	file.open(path);
+	if (!file.is_open())
+		file.open(path);
 	file << activePlayer;
 	file.close();
 }
