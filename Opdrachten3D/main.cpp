@@ -135,8 +135,8 @@ void init()
 	biljartTable[0] = new ObjModel("models/biljard/Biljart_table.obj");
 	biljartTable[1] = new ObjModel("models/biljard/Biljart_edge.obj");
 	biljartTable[2] = new ObjModel("models/biljard/Biljart_cloth.obj");
-	whiteBall = new WhiteBall("models/ball/WhiteBall.obj", "WhiteBall");
 	redBall = new RedBall("models/ball/RedBall.obj", "RedBall");
+	whiteBall = new WhiteBall("models/ball/WhiteBall.obj", "WhiteBall");
 	yellowBall = new YellowBall("models/ball/YellowBall.obj", "YellowBall");
 	camera = new Camera(window, *whiteBall, *yellowBall);
 	particleSystemWhiteBall = new ParticleSystem(50, *whiteBall);

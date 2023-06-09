@@ -96,7 +96,7 @@ ObjModel::ObjModel(const std::string& fileName)
 
 	if (!pFile.is_open())
 	{
-		std::cout << "Could not open file " << fileName << "\n\tSee the /models folder and check if all files are correct." << std::endl;
+		std::cout << "Could not open file " << fileName << "\nSee the /models folder and check if all files are correct." << std::endl;
 		exit(-1);
 	}
 

@@ -14,3 +14,7 @@
 [07-06-2023-19-51-03] FileManagerTest ReadFile0 Passed
 [07-06-2023-19-51-03] FileManagerTest ReadFile1 Passed
 [07-06-2023-19-51-03] FileManagerTest ReadFile2 Passed
+[09-06-2023-14-48-13] FileManagerTest WriteFile Passed
+[09-06-2023-14-48-13] FileManagerTest ReadFile0 Passed
+[09-06-2023-14-48-13] FileManagerTest ReadFile1 Passed
+[09-06-2023-14-48-13] FileManagerTest ReadFile2 Passed

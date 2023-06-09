@@ -4,25 +4,25 @@
 #include <string>
 #include "FileManager.cpp"
 
-class Bernard
+class TestResults
 {
 public:
-	Bernard(std::string path);
-	~Bernard();
+	TestResults(std::string path);
+	~TestResults();
 	void WriteResult(std::string testCase, std::string testName, bool passed);
 	std::string path;
 };
 
-Bernard::Bernard(std::string path)
+TestResults::TestResults(std::string path)
 {
 	this->path = path;
 }
 
-Bernard::~Bernard()
+TestResults::~TestResults()
 {
 }
 
-void Bernard::WriteResult(std::string testCase, std::string testName, bool passed) {
+void TestResults::WriteResult(std::string testCase, std::string testName, bool passed) {
 	std::ofstream file;
 	auto now = std::chrono::system_clock::now();
 	std::time_t currentTime = std::chrono::system_clock::to_time_t(now);
@@ -42,7 +42,7 @@ void Bernard::WriteResult(std::string testCase, std::string testName, bool passe
 }
 
 FileManager* manager = new FileManager("TestFile.txt");
-Bernard* results = new Bernard("Results.txt");
+TestResults* results = new TestResults("Results.txt");
 
 TEST(FileManagerTest, WriteFile) {
 	manager->writeActivePlayer(true);

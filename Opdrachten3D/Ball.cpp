@@ -1,10 +1,7 @@
 #include "ball.h"
 
-Ball::Ball(std::string filePath, std::string tag)
+Ball::Ball(std::string filePath, std::string tag) : path(filePath), model(new ObjModel(filePath)), tag(tag)
 {
-	path = filePath;
-	model = new ObjModel(path);
-	this->tag = tag;
 }
 
 Ball::~Ball() {
