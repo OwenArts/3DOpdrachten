@@ -1,10 +1,8 @@
-## Three cushion billiard OpenGL
-
-# Three-Cushion Billiards
+# Three-Cushion Billiards OpenGL
 
 This is a C++ project that simulates the game of three-cushion billiards, where players aim to hit a ball against three cushions before it comes to a stop. The project utilizes OpenGL for 3D rendering and implements camera control using keyboard and mouse input.
 
-![Game Screenshot](screenshot.png) *(Include a screenshot of the game to provide a visual reference.)*
+![Game Screenshot](/images/screenshot.png)
 
 ## Installation
 
@@ -12,7 +10,7 @@ Follow these steps to install and run the project locally:
 
 1. Clone the repository to your local machine:
    ```
-   git clone https://github.com/username/repo-name.git
+   git clone https://github.com/OwenArts/Three_Cushion_Billiard_OpenGL.git
    ```
 
 2. Navigate to the project directory:
@@ -34,26 +32,59 @@ Follow these steps to install and run the project locally:
 
 ## Usage
 
-* Explain how to play the game and which controls are used. For example:
+* How to play the game and which controls are used:
   - Use the "a" and "d" keys or the left and right arrow keys to move the camera and aim the active player's ball.
   - Move the mouse to change the camera direction.
   - Click the mouse to fire the ball in the direction you are looking with the camera.
-  - After each turn, the camera will move to the other ball, and it will be the second player's turn.
+  - After each turn, the camera will move to the other ball, and it will be the other player's turn.
 
-* Provide any additional instructions, gameplay rules, known issues, or limitations.
+* This is only the start and basic of a Three-Cushion Billiards game. Therefor it may still contain some bugs and not all Three-Cushion Billiards rules are implemented. There is no point system and the system doesn't check if the player has touched three cushions before touching the second ball.
+   - The particle system seems to be fixed to the red ball's position, this is a known bug. 
 
 ## Examples
 
-* Include some code snippets to demonstrate the key parts of your implementation, such as camera control or the physics of ball movement.
+The camera rotates around the ball using an offset, this is a glm::vec3 called distanceToObject. The camera class has a boolean to know what player to follow. It's usage can be seen underneath.
+```cpp
+glm::mat4 Camera::getMatrix()
+{
+	glm::mat4 ret(1.0f);
+	ret = glm::rotate(ret, rotation.x, glm::vec3(1, 0, 0));
+	ret = glm::rotate(ret, rotation.y, glm::vec3(0, 1, 0));
+	
+	glm::vec3 cameraPosition;
+	if (activePlayer)
+	{
+		glm::vec3 playerTwoPosition = playerTwo->position + glm::vec3(0, 1.f, 0);
+		glm::vec3 offset(0, 0, distanceToObject);
+		glm::mat4 rotationMatrix = glm::rotate(glm::mat4(1.0f), -rotation.y, glm::vec3(0, 1, 0));
+		glm::vec4 rotatedOffset = rotationMatrix * glm::vec4(offset, 1.0f);
+		cameraPosition = playerTwoPosition + glm::vec3(rotatedOffset);
+	}
+	else
+	{
+		glm::vec3 playerOnePosition = playerOne->position + glm::vec3(0, 1.f, 0);
+		glm::vec3 offset(0, 0, distanceToObject);
+		glm::mat4 rotationMatrix = glm::rotate(glm::mat4(1.0f), -rotation.y, glm::vec3(0, 1, 0));
+		glm::vec4 rotatedOffset = rotationMatrix * glm::vec4(offset, 1.0f);
+		cameraPosition = playerOnePosition + glm::vec3(rotatedOffset);
+	}
+	ret = glm::translate(ret, -cameraPosition);
 
-## Contributing
+	return ret;
+}
+```
 
-Contributions to this project are welcome. If you want to make improvements, report bugs, or propose new features, you can submit a pull request. Please follow the coding standards and use clear commit messages.
+A ball moves in the direction the camera is looking, this is done using sinus and cosinus because the camera's direction is a floating value. 
+```cpp
+void Ball::move(float direction, float speed)
+{
+	move(glm::vec2(-sin(direction), cos(direction)), speed);
+	lookDirection.y = direction;
+}
 
-## License
-
-This project is licensed under the [MIT License](LICENSE). Refer to the license file for more information.
-
-## Contact
-
-For any questions, feedback, or suggestions, you can reach me via email at [your-email@example.com](mailto:your-email@example.com). You can also open an issue in the GitHub repository.
+void Ball::move(glm::vec2 direction, float speed)
+{
+	this->moveDirection = direction;
+	this->speed = speed;
+}
+```
