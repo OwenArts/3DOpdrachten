@@ -42,9 +42,6 @@
     <ClCompile Include="Ball.cpp">
       <Filter>Source Files\Object</Filter>
     </ClCompile>
-    <ClCompile Include="Ceu.cpp">
-      <Filter>Source Files\Object</Filter>
-    </ClCompile>
     <ClCompile Include="WhiteBall.cpp">
       <Filter>Source Files\Object</Filter>
     </ClCompile>
@@ -84,9 +81,6 @@
       <Filter>Header Files\object</Filter>
     </ClInclude>
     <ClInclude Include="RedBall.h">
-      <Filter>Header Files\object</Filter>
-    </ClInclude>
-    <ClInclude Include="Ceu.h">
       <Filter>Header Files\object</Filter>
     </ClInclude>
     <ClInclude Include="ObjModel.h">

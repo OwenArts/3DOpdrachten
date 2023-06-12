@@ -10,39 +10,8 @@
 #include "YellowBall.h"
 #include "RedBall.h"
 #include "Ball.h"
-#include "Ceu.h"
 #include "ParticleSystem.h"
 #include "FileManager.h"
-
-/* TODO :
-*	Bal toevoegen (ball.cpp, white-, red-, yellowball.cpp)						DONE
-*	Bal logica (locatie, richting, snelheid (afnemend), botsing, etc)			DONE (richting, snelheid)
-*	3 Cushion Billiard logica game toevoegen
-*	Camera laten bewegen om juiste bal											DONE
-*	Afmetigen tafel																DONE
-*	Collision met randen tafel													DONE
-*	Collision met andere ballen													DONE - beetje buggy
-*	Stok logica (afschieten, richting laten bepalen door gebruiker, etc)		DONE - afschieten muisklik, richting dmv a,d, pijlknoppen en muis
-*	Belichting																	DONE
-*	mist/fog																	DONE
-*	Automatisch bewegend object (Keu of bal laten rollen)						DONE - bal over y as laten bewegen
-*	Alpha blending (cue transparant maken)										BACKLOG
-*	Speler object laten bedienen (zie `Stok logica`)							DONE
-*	Stok toevoegen (ceu.cpp) (aanmaken in blender)								BACKLOG
-*	Particle toevoegen onder ballen												DONE - redball collision buggy
-*	kleur van de mist aanpassen naar kleur achtergrond.							DONE
-*	test of pointers bij camera constructor werkt								DONE
-*	ballen opdelen in aparte threads
-*	actieve speler schrijven en lezen vanuit een bestand (fileIO)				DONE
-*	overerving + virtual functie												DONE
-*	deconstructors																? - Hoe in te vullen
-*	1 unit test
-*	standaard datastructuren													?
-*	rekening houden met memory leaks
-*	afhandeling van exeptions
-*	documentatie toevoegen
-*	GPU gebruiken ipv CPU
-*/
 
 using tigl::Vertex;
 
@@ -51,7 +20,7 @@ using tigl::Vertex;
 #pragma comment(lib, "opengl32.lib")
 
 GLFWwindow* window;
-ObjModel* biljartTable[3];
+std::vector<ObjModel*> biljardTable;
 Camera* camera;
 float rotation = 0;
 WhiteBall* whiteBall;
@@ -132,13 +101,18 @@ void init()
 		});
 
 	// Load all moddels
-	biljartTable[0] = new ObjModel("models/biljard/Biljart_table.obj");
+	biljardTable.push_back(new ObjModel("models/biljard/Biljart_table.obj"));
+	biljardTable.push_back(new ObjModel("models/biljard/Biljart_edge.obj"));
+	biljardTable.push_back(new ObjModel("models/biljard/Biljart_cloth.obj"));
+	/*biljartTable[0] = new ObjModel("models/biljard/Biljart_table.obj");
 	biljartTable[1] = new ObjModel("models/biljard/Biljart_edge.obj");
-	biljartTable[2] = new ObjModel("models/biljard/Biljart_cloth.obj");
+	biljartTable[2] = new ObjModel("models/biljard/Biljart_cloth.obj");*/
 	redBall = new RedBall("models/ball/RedBall.obj", "RedBall");
 	whiteBall = new WhiteBall("models/ball/WhiteBall.obj", "WhiteBall");
 	yellowBall = new YellowBall("models/ball/YellowBall.obj", "YellowBall");
 	camera = new Camera(window, *whiteBall, *yellowBall);
+
+	// Initiate particle systems
 	particleSystemWhiteBall = new ParticleSystem(50, *whiteBall);
 	particleSystemYellowBall = new ParticleSystem(100, *yellowBall);
 	particleSystemRedBall = new ParticleSystem(100, *redBall);
@@ -150,7 +124,7 @@ void update()
 	float deltaTime = lastFrameTime - frameTime;
 	lastFrameTime = frameTime;
 
-
+	// Handles the active player, writes the active player to a file on change.
 	if (!activePlayer && (whiteBall->getSpeed() <= 0.05f && whiteBall->getSpeed() > 0))
 	{
 		activePlayer = !activePlayer;
@@ -162,6 +136,7 @@ void update()
 		fileManager->writeActivePlayer(activePlayer);
 	}
 
+	// Update the camera, balls and particles
 	camera->update(window, activePlayer);
 	whiteBall->update(deltaTime);
 	particleSystemWhiteBall->updateParticles(deltaTime);
@@ -170,6 +145,7 @@ void update()
 	redBall->update(deltaTime);
 	particleSystemRedBall->updateParticles(deltaTime);
 
+	// Check for all collision types
 	CheckForCollisionTable(*whiteBall);
 	CheckForCollisionTable(*yellowBall);
 	CheckForCollisionTable(*redBall);
@@ -195,14 +171,13 @@ void draw()
 
 	glEnable(GL_DEPTH_TEST);
 
-
-	for (auto& model : biljartTable)
+	// Draw the table and balls
+	for (const auto& model : biljardTable)
 		model->draw();
 
 	whiteBall->draw();
 	yellowBall->draw();
 	redBall->draw();
-	//ceu->draw();
 
 	// Render particles
 	particleSystemWhiteBall->renderParticles();
@@ -210,6 +185,7 @@ void draw()
 	particleSystemRedBall->renderParticles();
 }
 
+// Enables/disables the fog. Sets the color to the same color as the background of the world.
 void enableFog(bool state)
 {
 	if (state) {
@@ -223,6 +199,7 @@ void enableFog(bool state)
 	}
 }
 
+// Enables/disables the lighting. 
 void enableLight(bool state)
 {
 	if (state) {
@@ -240,23 +217,13 @@ void enableLight(bool state)
 	}
 }
 
+// Checks if ball 1 and ball 2 have collision based on their position and radius. if there is a collision on both the z- and x-axis, the ball with the lowest speed wil get the speed of the other ball -0,5f.
 void CheckForCollisionBall(Ball& one, Ball& two)
 {
 	bool collisionX = false;
 	bool collisionZ = false;
 	float radius = 0.25f;
 
-	//if (one.getSpeed() != 0)
-	//{
-	//	std::cout << "[ORIGINAL]	ball1 [" << round(one.getPosition().x * 10.0) / 10.0 << "," << round(one.getPosition().z * 10.0) / 10.0 << "], ball2 [" << round(two.getPosition().x * 10.0) / 10.0 << "," << round(two.getPosition().z * 10.0) / 10.0 << "]" << std::endl;
-	//	std::cout << "[IF STATEMENT] (x) condition 1 [" << (round(one.getPosition().x * 10.f) / 10.f < (round(two.getPosition().x * 10.f) / 10.f) - 0.1f) << "]" << std::endl;
-	//	std::cout << "[IF STATEMENT] (x) condition 2 [" << (round(one.getPosition().x * 10.f) / 10.f > (round(two.getPosition().x * 10.f) / 10.f) + 0.1f) << "]" << std::endl;
-	//	std::cout << "[IF STATEMENT] (x) condition 1&2 [" << ((round(one.getPosition().x * 10.f) / 10.f < round(two.getPosition().x * 10.f) / 10.f && round(one.getPosition().x * 10.f) / 10.f > round(two.getPosition().x * 10.f) / 10.f) || round(one.getPosition().x * 10.f) / 10.f == round(two.getPosition().x * 10.f) / 10.f) << "]" << std::endl;
-	//	std::cout << "[IF STATEMENT] (y) condition 1 [" << (round(one.getPosition().z * 10.f) / 10.f <= round(two.getPosition().z * 10.f) / 10.f - 0.1f) << "]" << std::endl;
-	//	std::cout << "[IF STATEMENT] (y) condition 2 [" << (round(one.getPosition().z * 10.f) / 10.f >= round(two.getPosition().z * 10.f) / 10.f + 0.1f) << "]" << std::endl;
-	//	std::cout << "[IF STATEMENT] (y) condition 1&2 [" << (round(one.getPosition().z * 10.f) / 10.f <= round(two.getPosition().z * 10.f) / 10.f && round(one.getPosition().z * 10.f) / 10.f >= round(two.getPosition().z * 10.f) / 10.f) << "]" << std::endl;
-	//	std::cout << "--------------------------------------------------------------------------" << std::endl;
-	//}
 
 	if ((round(one.position.x * 10.f) / 10.f < round(two.position.x * 10.f) / 10.f + radius &&
 		round(one.position.x * 10.f) / 10.f > round(two.position.x * 10.f) / 10.f - radius) ||
@@ -296,20 +263,15 @@ void CheckForCollisionBall(Ball& one, Ball& two)
 	}
 }
 
+// Checks if a ball has collision with the edges of the table.
 void CheckForCollisionTable(Ball& ball)
 {
 	/*
-	*  ORGINEEL - COORDS HOEKEN TAFEL
-	*	X = -1.8063,	Z = -2.76143 	-	RECHTS ONDER (VANAF STARTPUNT)
-	*	X = -1.81101,	Z =  2.78461	-	RECHTS BOVEN (VANAF STARTPUNT)
-	*	X = 1.80754,	Z =  2.73023	-	LINKS BOVEN (VANAF STARTPUNT)
-	*	X = 1.81428,	Z = -2.81266	-	lINKS ONDER (VANAF STARTPUNT)
-	*
-	*  AFGEROND - COORDS HOEKEN TAFEL
-	*	X = -1.81,	Z = -2.80 	-	RECHTS ONDER (VANAF STARTPUNT)
-	*	X = -1.81,	Z =  2.80	-	RECHTS BOVEN (VANAF STARTPUNT)
-	*	X =  1.81,	Z =  2.80	-	LINKS BOVEN (VANAF STARTPUNT)
-	*	X =  1.81,	Z = -2.80	-	lINKS ONDER (VANAF STARTPUNT)
+	*   Table corners
+	*	X = -1.81,	Z = -2.80 	-	Lower right
+	*	X = -1.81,	Z =  2.80	-	Upper right
+	*	X =  1.81,	Z =  2.80	-	Upper left
+	*	X =  1.81,	Z = -2.80	-	Lower left
 	*/
 	float leftWall = 1.81f;
 	float rightWall = -1.81f;

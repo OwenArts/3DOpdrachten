@@ -15,7 +15,6 @@ FileManager::FileManager(std::string fileName) {
 }
 
 FileManager::~FileManager() {
-
 }
 
 bool FileManager::readActivePlayer() {
