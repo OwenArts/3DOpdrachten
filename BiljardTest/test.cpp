@@ -7,22 +7,21 @@
 class TestResults
 {
 public:
-	TestResults(std::string path);
+	TestResults(const std::string& path);
 	~TestResults();
-	void WriteResult(std::string testCase, std::string testName, bool passed);
-	std::string path;
+	void WriteResult(const std::string& testCase, const std::string& testName, bool passed);
+	const std::string path;
 };
 
-TestResults::TestResults(std::string path)
+TestResults::TestResults(const std::string& path) : path(path)
 {
-	this->path = path;
 }
 
 TestResults::~TestResults()
 {
 }
 
-void TestResults::WriteResult(std::string testCase, std::string testName, bool passed) {
+void TestResults::WriteResult(const std::string& testCase, const std::string& testName, bool passed) {
 	std::ofstream file;
 	auto now = std::chrono::system_clock::now();
 	std::time_t currentTime = std::chrono::system_clock::to_time_t(now);
